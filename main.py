@@ -49,6 +49,7 @@ def main():
 			generator_instance.generate_advanced_CRUD_repository()
 		else:
 			generator_instance.generate()
+	print("CRUD gerado com sucesso." if user_inputs['language'] == "BR" else "Successfully generated the CRUD files.")
 
 if __name__ == "__main__":
 	main()

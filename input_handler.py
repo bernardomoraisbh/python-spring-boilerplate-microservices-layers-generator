@@ -1,15 +1,15 @@
 from utils import camel_to_kebab
 
 
-def gather_inputs():
+def gather_inputs(input_function=input):
 	# Gather user inputs
-	group_name = input("Enter the group project name (dots-separated): ")
-	entity_name = input("Enter the entity name (pascal case): ")
-	language = input("Enter the language (US/BR): ")
-	fields_input = input("Enter the fields (semicolon-separated): ")
-	table_name = input("Enter the table name (database table name, using snake case): ")
-	table_schema = input("Enter the table schema: ")
-	jdk_version = input("Enter JDK version (11/17): ")
+	group_name = input_function("Enter the group project name (dots-separated): ")
+	entity_name = input_function("Enter the entity name (pascal case): ")
+	language = input_function("Enter the language (US/BR): ")
+	fields_input = input_function("Enter the fields (semicolon-separated): ")
+	table_name = input_function("Enter the table name (database table name, using snake case): ")
+	table_schema = input_function("Enter the table schema: ")
+	jdk_version = input_function("Enter JDK version (11/17): ")
 	fields = fields_input.split(';')
 
 	# group_name = "api.sistema.registro"
@@ -24,10 +24,10 @@ def gather_inputs():
 
 	return {
 			'group_name': group_name.strip(),
-			'entity_name': entity_name,
-			'language': language,
+			'entity_name': entity_name.strip(),
+			'language': language.strip(),
 			'fields_input': [attr.strip() for attr in fields],
-			'table_name': table_name,
-			'table_schema': table_schema,
-			'jdk_version': jdk_version,
+			'table_name': table_name.strip(),
+			'table_schema': table_schema.strip(),
+			'jdk_version': jdk_version.strip(),
 	}
