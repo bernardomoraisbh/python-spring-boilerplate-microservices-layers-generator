@@ -19,6 +19,7 @@ class RequestGenerator(BaseGenerator):
 		self.complete_package_path = complete_package_path
 
 	def generate(self):
+		request_name_pascal = camel_to_pascal(self.entity_name)
 		fields_code = []
 		empty_tabs_size = ""
 		tabs_size = "\t\t\t\t"
@@ -49,8 +50,8 @@ class RequestGenerator(BaseGenerator):
 				@NoArgsConstructor
 				@JsonInclude(JsonInclude.Include.NON_ABSENT)
 				@JsonIgnoreProperties(ignoreUnknown = true)
-				public class {self.entity_name}Request {{
+				public class {request_name_pascal}Request {{
 						{fields_code}
 				}}
 		""")
-		self.write_to_java_file(f"{self.complete_package_path}/request", f"{self.entity_name}Request", request_code)
+		self.write_to_java_file(f"{self.complete_package_path}/request", f"{request_name_pascal}Request", request_code)

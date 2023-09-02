@@ -2,7 +2,7 @@
 import re
 from textwrap import dedent
 
-from utils import camel_to_snake
+from utils import camel_to_pascal, camel_to_snake
 
 from .base_generator import BaseGenerator
 
@@ -25,6 +25,7 @@ class EntityGenerator(BaseGenerator):
 		field_code_lines = []
 		empty_tabs_size = ""
 		tabs_size = "\t\t\t\t"
+		entity_name_pascal = camel_to_pascal(self.entity_name)
 
 		for field in self.fields_input:
 				parts = field.split("-")
@@ -87,7 +88,7 @@ class EntityGenerator(BaseGenerator):
 				@Data
 				@Table(name = "{self.table_name}", schema = "{self.table_schema}")
 				@SequenceGenerator(name = "seq_{self.table_name}", sequenceName = "seq_{self.table_name}", allocationSize = 1)
-				public class {self.entity_name} {{
+				public class {entity_name_pascal} {{
 
 						@Id
 						@GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_id_{self.table_name}")
@@ -100,4 +101,4 @@ class EntityGenerator(BaseGenerator):
 						private Integer {version_field};
 				}}
 		""")
-		self.write_to_java_file(f"{self.complete_package_path}/entity", self.entity_name, entity_code)
+		self.write_to_java_file(f"{self.complete_package_path}/entity", entity_name_pascal, entity_code)

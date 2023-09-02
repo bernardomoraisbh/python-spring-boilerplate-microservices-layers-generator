@@ -29,13 +29,13 @@ class RepositoryGenerator(BaseGenerator):
 				import org.springframework.data.repository.CrudRepository;
 
 				@NoRepositoryBean
-				public interface IBaseRepository<T, ID> extends JpaRepository<T, ID>, CrudRepository<T, ID> {{
+				public interface BaseRepository<T, ID> extends JpaRepository<T, ID>, CrudRepository<T, ID> {{
 
-						@Query(value = "SELECT now()", nativeQuery = true)
+						@Query(value = "SELECT now() AT TIME ZONE 'UTC'", nativeQuery = true)
 						LocalDateTime {'retornarDataBanco' if self.language == 'BR' else 'getDatabaseTime'}();
 				}}
 		""")
-		self.write_to_java_file(f"{self.complete_package_path}/repository", "IBaseRepository", i_base_repository_code)
+		self.write_to_java_file(f"{self.complete_package_path}/repository", "BaseRepository", i_base_repository_code)
 
 	def generate(self):
 		self.base_repository_generator()
@@ -45,16 +45,17 @@ class RepositoryGenerator(BaseGenerator):
 				import {self.group_name}.entity.{self.entity_name};
 				import java.util.Optional;
 
-				public interface I{self.entity_name}Repository extends IBaseRepository<{self.entity_name}, Long> {{
+				public interface {self.entity_name}Repository extends BaseRepository<{self.entity_name}, Long> {{
 
 						// ... Default Queries
 				}}
 		""")
-		self.write_to_java_file(f"{self.complete_package_path}/repository", f"I{self.entity_name}Repository", repository_code)
+		self.write_to_java_file(f"{self.complete_package_path}/repository", f"{self.entity_name}Repository", repository_code)
 
 	def generate_advanced_CRUD_repository(self):
 		self.base_repository_generator()
 
+		repository_name_pascal = camel_to_pascal(self.entity_name)
 		method_name = 'listarComFiltros' if self.language == 'BR' else 'findByFilters'
 		date_field = 'dataFim' if self.language == 'BR' else 'endDate'
 
@@ -74,9 +75,9 @@ class RepositoryGenerator(BaseGenerator):
 						fields_code += '\n\t\t\t\t\t\t\t\t" AND (:#{\'#searchFilter.' + f'{field_name_camel_case}' + '} IS NULL OR ' + f'{self.entity_name.lower()}.{field_name_camel_case}' + ' = :#{\'#searchFilter.' + f'{field_name_camel_case}' + '}) '
 
 		query_code = f"""
-						@Query("SELECT {self.entity_name.lower()} FROM {self.entity_name} {self.entity_name.lower()} " +
+						@Query("SELECT {self.entity_name.lower()} FROM {repository_name_pascal} {self.entity_name.lower()} " +
 						{fields_code}")
-						Page<{self.entity_name}> {method_name}(@Param("searchFilter") {self.entity_name}Request searchFilter, Pageable pageable);
+						Page<{repository_name_pascal}> {method_name}(@Param("searchFilter") {repository_name_pascal}Request searchFilter, Pageable pageable);
 		"""
 
 		repository_code = dedent(f"""\
@@ -84,23 +85,23 @@ class RepositoryGenerator(BaseGenerator):
 
 				import java.util.Optional;
 
-				import {self.group_name}.request.{self.entity_name}Request;
-				import {self.group_name}.entity.{self.entity_name};
+				import {self.group_name}.request.{repository_name_pascal}Request;
+				import {self.group_name}.entity.{repository_name_pascal};
 				import org.springframework.data.domain.Page;
 				import org.springframework.data.domain.Pageable;
 				import org.springframework.data.jpa.repository.Modifying;
 				import org.springframework.data.jpa.repository.Query;
 				import org.springframework.data.repository.query.Param;
 
-				public interface I{self.entity_name}Repository extends IBaseRepository<{self.entity_name}, Long> {{
+				public interface {repository_name_pascal}Repository extends BaseRepository<{repository_name_pascal}, Long> {{
 
-						Optional<{self.entity_name}> findByIdAnd{camel_to_pascal(date_field)}IsNull(Long id);
+						Optional<{repository_name_pascal}> findByIdAnd{camel_to_pascal(date_field)}IsNull(Long id);
 
 						@Modifying
-						@Query("UPDATE {self.entity_name} e SET e.{date_field} = :#{{#{'retornarDataBanco' if self.language == 'BR' else 'getDatabaseTime'}()}} WHERE e.id = :id")
+						@Query("UPDATE {repository_name_pascal} e SET e.{date_field} = :#{{#{'retornarDataBanco' if self.language == 'BR' else 'getDatabaseTime'}()}} WHERE e.id = :id")
 						void {'excluirLogicamente' if self.language == 'BR' else 'logicalDelete'}(@Param("id") Long id);
 						{query_code}
 				}}
 		""")
 
-		self.write_to_java_file(f"{self.complete_package_path}/repository", f"I{self.entity_name}Repository", repository_code)
+		self.write_to_java_file(f"{self.complete_package_path}/repository", f"{repository_name_pascal}Repository", repository_code)

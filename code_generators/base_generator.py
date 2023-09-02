@@ -1,6 +1,8 @@
 # base_generator.py
 import os
 
+from utils import camel_to_pascal
+
 
 class BaseGenerator:
 

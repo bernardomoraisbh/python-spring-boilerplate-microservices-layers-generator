@@ -19,15 +19,16 @@ class ServiceGenerator(BaseGenerator):
 		self.complete_package_path = complete_package_path
 
 	def generate(self):
-		repo_name = f"I{self.entity_name}Repository"
-		repo_name_camel_case = pascal_to_camel(self.entity_name)
+		service_name_pascal = camel_to_pascal(self.entity_name)
+		repo_name = f"{service_name_pascal}Repository"
+		repo_name_camel_case = pascal_to_camel(service_name_pascal)
 		repo_field_name = f"{repo_name_camel_case}Repository"
 		date_field = 'dataFim' if self.language == 'BR' else 'endDate'
 
 		service_code = dedent(f"""\
 				package {self.group_name}.services;
 
-				import {self.group_name}.entity.{self.entity_name};
+				import {self.group_name}.entity.{service_name_pascal};
 				import {self.group_name}.vo.{repo_name};
 				import {self.group_name}.repository.{repo_name};
 				import org.springframework.beans.factory.annotation.Autowired;
@@ -40,27 +41,27 @@ class ServiceGenerator(BaseGenerator):
 				import java.util.Optional;
 
 				@Service
-				public class {self.entity_name}Service {{
+				public class {service_name_pascal}Service {{
 
 						@Autowired
 						private {repo_name} {repo_field_name};
 
-						public {self.entity_name} {'buscarPorId' if self.language == 'BR' else 'findById'}(Long id) {{
+						public {service_name_pascal} {'buscarPorId' if self.language == 'BR' else 'findById'}(Long id) {{
 								return {repo_field_name}.findByIdAnd{camel_to_pascal(date_field)}
-										.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{self.entity_name} {'não encontrado' if self.language == 'BR' else 'not found'}."));
+										.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{service_name_pascal} {'não encontrado' if self.language == 'BR' else 'not found'}."));
 						}}
 
-						public {self.entity_name}VO getVOById(Long id) {{
-								return new {self.entity_name}VO({'buscarPorId' if self.language == 'BR' else 'findById'}(id));
+						public {service_name_pascal}VO {'buscarVoPorId' if self.language == 'BR' else 'findVoById'}(Long id) {{
+								return new {service_name_pascal}VO({'buscarPorId' if self.language == 'BR' else 'findById'}(id));
 						}}
 
-						public Page<{self.entity_name}> {'listarComFiltros' if self.language == 'BR' else 'findByFilters'}({self.entity_name}Request request, Pageable pageable) {{
+						public Page<{service_name_pascal}> {'listarComFiltros' if self.language == 'BR' else 'findByFilters'}({service_name_pascal}Request request, Pageable pageable) {{
 								return {repo_field_name}.{'listarComFiltros' if self.language == 'BR' else 'findByFilters'}(request, pageable);
 						}}
 
-						public Page<{self.entity_name}VO> getVOList({self.entity_name}Request request, Pageable pageable) {{
-								Page<{self.entity_name}> entityList = {'listarComFiltros' if self.language == 'BR' else 'findByFilters'}(request, pageable);
-								return new PageImpl<>(entityList.stream().map(x -> new {self.entity_name}VO(x)).collect(Collectors.toList()), pageable, entityList.getTotalElements());
+						public Page<{service_name_pascal}VO> {'listarVoFiltrado' if self.language == 'BR' else 'listVoWithFilters'}({service_name_pascal}Request request, Pageable pageable) {{
+								Page<{service_name_pascal}> entityList = {'listarComFiltros' if self.language == 'BR' else 'findByFilters'}(request, pageable);
+								return new PageImpl<>(entityList.stream().map(x -> new {service_name_pascal}VO(x)).collect(Collectors.toList()), pageable, entityList.getTotalElements());
 						}}
 
 						@Transactional
@@ -69,4 +70,4 @@ class ServiceGenerator(BaseGenerator):
 						}}
 				}}
 		""")
-		self.write_to_java_file(f"{self.complete_package_path}/services", f"{self.entity_name}Service", service_code)
+		self.write_to_java_file(f"{self.complete_package_path}/services", f"{service_name_pascal}Service", service_code)

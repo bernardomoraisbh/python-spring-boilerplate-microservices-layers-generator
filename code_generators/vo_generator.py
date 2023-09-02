@@ -1,5 +1,7 @@
 from textwrap import dedent
 
+from utils import camel_to_pascal, pascal_to_camel
+
 from .base_generator import BaseGenerator
 
 
@@ -19,6 +21,7 @@ class VoGenerator(BaseGenerator):
 		fields_code = ""
 		empty_tabs_size = ""
 		tabs_size = "\t\t\t\t\t\t"
+		vo_name_pascal = camel_to_pascal(self.entity_name)
 
 		for f in self.fields_input:
 			field_type = f.split('-')[0]
@@ -34,7 +37,7 @@ class VoGenerator(BaseGenerator):
 
 		fields_code = fields_code.rstrip('\n')
 		# Generate the constructor that accepts the Entity object
-		constructor_code = f"public {self.entity_name}VO({self.entity_name} entity) {{\n"
+		constructor_code = f"public {vo_name_pascal}VO({vo_name_pascal} entity) {{\n"
 		constructor_code += "\t\t\t\t\t\t\tif (entity == null) return;\n"
 		for field in self.fields_input:
 			field_name = field.split('-')[1].split('[')[0]
@@ -43,7 +46,7 @@ class VoGenerator(BaseGenerator):
 
 		vo_code = dedent(f"""\
 				package {self.group_name}.vo;
-				import {self.group_name}.entity.{self.entity_name};
+				import {self.group_name}.entity.{vo_name_pascal};
 				import lombok.Data;
 				import lombok.NoArgsConstructor;
 				import com.fasterxml.jackson.annotation.JsonInclude;
@@ -54,11 +57,11 @@ class VoGenerator(BaseGenerator):
 				@NoArgsConstructor
 				@JsonInclude(JsonInclude.Include.NON_ABSENT)
 				@JsonIgnoreProperties(ignoreUnknown = true)
-				public class {self.entity_name}VO {{
+				public class {vo_name_pascal}VO {{
 
 						{fields_code}
 
 						{constructor_code}
 				}}
 		""")
-		self.write_to_java_file(f"{self.complete_package_path}/vo", f"{self.entity_name}VO", vo_code)
+		self.write_to_java_file(f"{self.complete_package_path}/vo", f"{vo_name_pascal}VO", vo_code)

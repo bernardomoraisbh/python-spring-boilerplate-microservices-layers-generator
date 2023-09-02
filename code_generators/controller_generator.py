@@ -20,6 +20,7 @@ class ControllerGenerator(BaseGenerator):
 
 	def generate(self):
 		entity_name_kebab = ''.join(word.lower() if i == 0 else '-' + word.lower() for i, word in enumerate(re.findall('[A-Z][^A-Z]*', self.entity_name)))
+		controller_name = camel_to_pascal(self.entity_name)
 		service_name = f"{self.entity_name}Service"
 		service_name_camel_case = pascal_to_camel(self.entity_name)
 		service_field_name = f"{service_name_camel_case}Service"
@@ -46,43 +47,43 @@ class ControllerGenerator(BaseGenerator):
 				@RestController
 				@RequestMapping("/{'/'.join(entity_name_kebab.split('-'))}")
 				@CrossOrigin("*")
-				public class {self.entity_name}Controller {{
+				public class {controller_name}Controller {{
 
-						private static final Logger logger = LoggerFactory.getLogger({self.entity_name}Controller.class);
+						private static final Logger logger = LoggerFactory.getLogger({controller_name}Controller.class);
 
 						@Autowired
 						private {service_name} {service_field_name};
 
 						@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-						public Page<{self.entity_name}VO> {'listarFiltrado' if self.language == 'BR' else 'listWithFilters'}({self.entity_name}Request request, @PageableDefault(sort = {"id"}, direction = Direction.DESC, size = Integer.MAX_VALUE) Pageable pageable) {{
-								logger.info("{self.entity_name}Controller.{'listarFiltrado' if self.language == 'BR' else 'listWithFilters'}({{}})", id);
-								return {service_field_name}.{'listarFiltrado' if self.language == 'BR' else 'listWithFilters'}(request, pageable);
+						public Page<{controller_name}VO> {'listarFiltrado' if self.language == 'BR' else 'listWithFilters'}({controller_name}Request request, @PageableDefault(sort = {{"id"}}, direction = Direction.DESC, size = Integer.MAX_VALUE) Pageable pageable) {{
+								logger.info("{controller_name}Controller.{'listarFiltrado' if self.language == 'BR' else 'listWithFilters'}()");
+								return {service_field_name}.{'listarVoFiltrado' if self.language == 'BR' else 'listVoWithFilters'}(request, pageable);
 						}}
 
 						@GetMapping(path = "/{{id}}", produces = MediaType.APPLICATION_JSON_VALUE)
-						public {self.entity_name}VO getSingleEntity(@PathVariable Long id) {{
-								logger.info("{self.entity_name}Controller.{'listar' if self.language == 'BR' else 'listAll'}({{}})", id);
-								return {service_field_name}.{'buscarPorId' if self.language == 'BR' else 'findById'}(id);
+						public {controller_name}VO getSingleEntity(@PathVariable Long id) {{
+								logger.info("{controller_name}Controller.{'listar' if self.language == 'BR' else 'listAll'}({{}})", id);
+								return {service_field_name}.{'buscarVoPorId' if self.language == 'BR' else 'findVoById'}(id);
 						}}
 
 						@PostMapping(path = "/{{id}}")
 						public void {'salvar' if self.language == 'BR' else 'saveEntity'}(@PathVariable Long id) {{
-								logger.info("{self.entity_name}Controller.{'salvar' if self.language == 'BR' else 'saveEntity'}({{}})", id);
+								logger.info("{controller_name}Controller.{'salvar' if self.language == 'BR' else 'saveEntity'}({{}})", id);
 								// TODO - TODO
 						}}
 
 						@PutMapping(path = "/{{id}}")
 						public void {'editar' if self.language == 'BR' else 'updateEntity'}(@PathVariable Long id) {{
-								logger.info("{self.entity_name}Controller.{'editar' if self.language == 'BR' else 'updateEntity'}({{}})", id);
+								logger.info("{controller_name}Controller.{'editar' if self.language == 'BR' else 'updateEntity'}({{}})", id);
 								// TODO - TODO
 						}}
 
 						@DeleteMapping(path = "/{{id}}")
 						@ResponseStatus(HttpStatus.ACCEPTED)
 						public void {'excluir' if self.language == 'BR' else 'deleteEntity'}(@PathVariable Long id) {{
-								logger.info("{self.entity_name}Controller.{'excluir' if self.language == 'BR' else 'deleteEntity'}({{}})", id);
+								logger.info("{controller_name}Controller.{'excluir' if self.language == 'BR' else 'deleteEntity'}({{}})", id);
 								{service_field_name}.{'excluirLogicamente' if self.language == 'BR' else 'logicalDelete'}(id);
 						}}
 				}}
 		""")
-		self.write_to_java_file(f"{self.complete_package_path}/controller", f"{self.entity_name}Controller", controller_code)
+		self.write_to_java_file(f"{self.complete_package_path}/controller", f"{controller_name}Controller", controller_code)
