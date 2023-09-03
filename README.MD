@@ -87,6 +87,10 @@ v2 - It will ask for the same things, but the fields option is a loop, so you ca
 
 v3 - A GUI interface will open where you can input the same as above and you can also dynamically input or remove new fields.
 
+<p align="center">
+	<img src="img/v3.png" style="width: 85%" alt="Execution of v3 script example"/>
+</p>
+
 You can also run the script passing the LANGUAGE (BR/US) AND the VERSION as execution args, as in the examples bellow:
 
 ```sh

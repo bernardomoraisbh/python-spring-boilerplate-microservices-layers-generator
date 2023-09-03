@@ -1,11 +1,11 @@
 
 BR = {
-	"Group Project Name": "Nome do Grupo de Projeto",
-	"Entity Name": "Nome da Entidade",
-	"Language": "Idioma",
-	"Table Name": "Nome da Tabela",
-	"Table Schema": "Esquema da Tabela",
-	"JDK Version": "Versão do JDK",
+	"Group Project Name:": "Nome do Grupo de Projeto",
+	"Entity Name:": "Nome da Entidade",
+	"Language:": "Idioma",
+	"Table Name:": "Nome da Tabela",
+	"Table Schema:": "Esquema da Tabela",
+	"JDK Version:": "Versão do JDK",
 	"Add Field": "Adicionar Campo",
 	"Generate Files": "Gerar Arquivos",
 	"Error": "Erro",
@@ -21,7 +21,15 @@ BR = {
 	"saveEntity": "salvar",
 	"updateEntity": "editar",
 	"deleteEntity": "excluir",
-	"not found": "não encontrado"
+	"not found": "não encontrado",
+	"Application closed by the user.": "Aplicação encerrada pelo usuário.",
+	"CRUD Input Fields": "Campos do CRUD",
+	"Column Name: ": "Nome da Coluna: ",
+	"Type: ": "Tipo: ",
+	"Name: ": "Nome: ",
+	"Join Cardinality: ": "Cardinalidade do Join: ",
+	"Join Column Name: ": "Nome da coluna do Join: ",
+	"Remove": "Remover"
 	# Add more as needed...
 }
 

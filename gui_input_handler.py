@@ -37,7 +37,7 @@ def gather_inputs_gui(language=None):
 		column_name_entry = ttk.Entry(field_frame, font=font)
 		column_name_entry.grid(row=2, column=1)
 
-		ttk.Label(field_frame, text=language_dict.get_text("Join Details: "), style=labelStyle).grid(row=2, column=2)
+		ttk.Label(field_frame, text=language_dict.get_text("Join Cardinality: "), style=labelStyle).grid(row=2, column=2)
 		join_details_entry = ttk.Entry(field_frame, font=font)
 		join_details_entry.grid(row=2, column=3)
 
@@ -47,7 +47,7 @@ def gather_inputs_gui(language=None):
 
 		# Add more field entries as needed
 
-		remove_button = ttk.Button(field_frame, text="Remove", style=buttonStyle, command=lambda: remove_field(field_frame))
+		remove_button = ttk.Button(field_frame, text=language_dict.get_text("Remove"), style=buttonStyle, command=lambda: remove_field(field_frame))
 		remove_button.grid(row=1, column=4)
 
 		fields.append((field_frame, type_entry, name_entry))
@@ -64,29 +64,29 @@ def gather_inputs_gui(language=None):
 
 	def validate_fields():
 		if not group_name_entry.get():
-			messagebox.showerror("Error", "Field group name cannot be empty!")
+			messagebox.showerror(language_dict.get_text("Error"), "Field group name cannot be empty!")
 			return False
 
 		if not entity_name_entry.get():
-			messagebox.showerror("Error", "Field entity name cannot be empty!")
+			messagebox.showerror(language_dict.get_text("Error"), "Field entity name cannot be empty!")
 			return False
 
 		if not language_entry.get():
-			messagebox.showerror("Error", "Field language cannot be empty!")
+			messagebox.showerror(language_dict.get_text("Error"), "Field language cannot be empty!")
 			return False
 		elif language_entry.get() not in ['US', 'BR']:
-			messagebox.showerror("Error", "Field language must be either 'US' or 'BR'!")
+			messagebox.showerror(language_dict.get_text("Error"), "Field language must be either 'US' or 'BR'!")
 			return False
 
 		if not table_name_entry.get():
-			messagebox.showerror("Error", "Field table name cannot be empty!")
+			messagebox.showerror(language_dict.get_text("Error"), "Field table name cannot be empty!")
 			return False
 
 		if not jdk_version_entry.get():
-			messagebox.showerror("Error", "Field jdk version cannot be empty!")
+			messagebox.showerror(language_dict.get_text("Error"), "Field jdk version cannot be empty!")
 			return False
 		elif jdk_version_entry.get() not in ['11', '17']:
-			messagebox.showerror("Error", "Field jdk version must be either '11' or '17'!")
+			messagebox.showerror(language_dict.get_text("Error"), "Field jdk version must be either '11' or '17'!")
 			return False
 
 		for field_frame, type_entry, name_entry, column_name_entry, join_details_entry, join_column_name_entry in fields:
@@ -97,13 +97,13 @@ def gather_inputs_gui(language=None):
 			join_column_name = join_column_name_entry.get()
 
 			if not type_value or not name_value:
-				messagebox.showerror("Error", "Fields type value and name value cannot be empty!")
+				messagebox.showerror(language_dict.get_text("Error"), "Fields type value and name value cannot be empty!")
 				return False
 			elif not join_details and join_column_name:
-				messagebox.showerror("Error", "When join column is present, join details name must be present!")
+				messagebox.showerror(language_dict.get_text("Error"), "When join column is present, join details name must be present!")
 				return False
 			elif join_details and not join_column_name:
-				messagebox.showerror("Error", "When join details is present, join column name must be present!")
+				messagebox.showerror(language_dict.get_text("Error"), "When join details is present, join column name must be present!")
 				return False
 
 		return True
@@ -133,7 +133,7 @@ def gather_inputs_gui(language=None):
 			root.quit()
 
 	root = tk.Tk()
-	root.geometry("1300x800")
+	root.geometry("1500x800")
 
 	# Configure style for Button, Label and Entry
 	style = ttk.Style()
@@ -141,9 +141,9 @@ def gather_inputs_gui(language=None):
 	style.configure(labelStyle, font=font)
 	style.configure("Large.TEntry", font=font)
 
-	root.title("Input Fields")
+	root.title(language_dict.get_text("CRUD Input Fields"))
 
-	group_name_label = ttk.Label(root, style=labelStyle, text=language_dict.get_text("Group Project Name"))
+	group_name_label = ttk.Label(root, style=labelStyle, text=language_dict.get_text("Group Project Name:"))
 	group_name_entry = ttk.Entry(root, font=font)
 	group_name_label.grid(row=0, column=0)
 	group_name_entry.grid(row=0, column=1)
@@ -181,7 +181,7 @@ def gather_inputs_gui(language=None):
 	outer_frame.grid(row=6, columnspan=2, sticky="w")
 
 	# Create a canvas inside the outer frame
-	canvas = tk.Canvas(outer_frame, width=1200, height=500)
+	canvas = tk.Canvas(outer_frame, width=1400, height=500)
 	scrollbar = ttk.Scrollbar(outer_frame, orient="vertical", command=canvas.yview)
 
 	fields_frame = ttk.Frame(canvas)
@@ -202,7 +202,7 @@ def gather_inputs_gui(language=None):
 	root.mainloop()
 
 	if 'group_name' not in data:
-		print("Application closed by the user.")
+		print(language_dict.get_text("Application closed by the user."))
 		sys.exit(1)
 
 	return data
