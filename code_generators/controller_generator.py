@@ -14,7 +14,7 @@ class ControllerGenerator(BaseGenerator):
 
 	def generate(self):
 		entity_name_kebab = ''.join(word.lower() if i == 0 else '-' + word.lower() for i, word in enumerate(re.findall('[A-Z][^A-Z]*', self.entity_name)))
-		controller_name = camel_to_pascal(self.entity_name)
+		controller_name = f"{camel_to_pascal(self.entity_name)}Controller"
 		service_name = f"{self.entity_name}Service"
 		service_name_camel_case = pascal_to_camel(self.entity_name)
 		service_field_name = f"{service_name_camel_case}Service"
@@ -41,43 +41,43 @@ class ControllerGenerator(BaseGenerator):
 				@RestController
 				@RequestMapping("/{'/'.join(entity_name_kebab.split('-'))}")
 				@CrossOrigin("*")
-				public class {controller_name}Controller {{
+				public class {controller_name} {{
 
-						private static final Logger logger = LoggerFactory.getLogger({controller_name}Controller.class);
+						private static final Logger logger = LoggerFactory.getLogger({controller_name}.class);
 
 						@Autowired
 						private {service_name} {service_field_name};
 
 						@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 						public Page<{controller_name}VO> {self.language_dict.get_text('listWithFilters')}({controller_name}Request request, @PageableDefault(sort = {{"id"}}, direction = Direction.DESC, size = Integer.MAX_VALUE) Pageable pageable) {{
-								logger.info("{controller_name}Controller.{self.language_dict.get_text('listWithFilters')}()");
+								logger.info("{controller_name}.{self.language_dict.get_text('listWithFilters')}()");
 								return {service_field_name}.{self.language_dict.get_text('listVoWithFilters')}(request, pageable);
 						}}
 
 						@GetMapping(path = "/{{id}}", produces = MediaType.APPLICATION_JSON_VALUE)
 						public {controller_name}VO {self.language_dict.get_text('findById')}(@PathVariable Long id) {{
-								logger.info("{controller_name}Controller.{self.language_dict.get_text('findById')}({{}})", id);
+								logger.info("{controller_name}.{self.language_dict.get_text('findById')}({{}})", id);
 								return {service_field_name}.{self.language_dict.get_text('findVoById')}(id);
 						}}
 
 						@PostMapping(path = "/{{id}}")
 						public void {self.language_dict.get_text('saveEntity')}(@PathVariable Long id) {{
-								logger.info("{controller_name}Controller.{self.language_dict.get_text('saveEntity')}({{}})", id);
+								logger.info("{controller_name}.{self.language_dict.get_text('saveEntity')}({{}})", id);
 								// TODO - TODO
 						}}
 
 						@PutMapping(path = "/{{id}}")
 						public void {self.language_dict.get_text('updateEntity')}(@PathVariable Long id) {{
-								logger.info("{controller_name}Controller.{self.language_dict.get_text('updateEntity')}({{}})", id);
+								logger.info("{controller_name}.{self.language_dict.get_text('updateEntity')}({{}})", id);
 								// TODO - TODO
 						}}
 
 						@DeleteMapping(path = "/{{id}}")
 						@ResponseStatus(HttpStatus.ACCEPTED)
 						public void {self.language_dict.get_text('deleteEntity')}(@PathVariable Long id) {{
-								logger.info("{controller_name}Controller.{self.language_dict.get_text('deleteEntity')}({{}})", id);
+								logger.info("{controller_name}.{self.language_dict.get_text('deleteEntity')}({{}})", id);
 								{service_field_name}.{self.language_dict.get_text('logicalDelete')}(id);
 						}}
 				}}
 		""")
-		self.write_to_java_file(f"{self.complete_package_path}/controller", f"{controller_name}Controller", controller_code)
+		self.write_to_java_file(f"{self.complete_package_path}/controller", f"{controller_name}", controller_code)

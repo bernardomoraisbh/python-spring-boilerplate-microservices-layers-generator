@@ -2,6 +2,8 @@
 
 SRC_MAIN_JAVA = "src/main/java"
 
+SRC_TEST_JAVA = "src/test/java"
+
 COMMON_JAVA_TYPES = {"String", "Boolean", "Double", "Float", "Integer", "Long", "Char", "long", "int", "char", "boolean", "double", "float"}
 
 EMPTY = ""

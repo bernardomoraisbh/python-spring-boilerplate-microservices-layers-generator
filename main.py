@@ -5,6 +5,7 @@ from code_generators.entity_generator import EntityGenerator
 from code_generators.repository_generator import RepositoryGenerator
 from code_generators.request_generator import RequestGenerator
 from code_generators.service_generator import ServiceGenerator
+from code_generators.test_controller_generator import TestGenerator
 from code_generators.vo_generator import VoGenerator
 from directory_handler import create_directories
 from input_handler import gather_inputs, parse_arguments
@@ -36,7 +37,8 @@ def main():
 		RequestGenerator,
 		RepositoryGenerator,
 		ServiceGenerator,
-		ControllerGenerator
+		ControllerGenerator,
+		TestGenerator
 	]
 
 	# Loop through each generator class and create an instance, then generate the code
