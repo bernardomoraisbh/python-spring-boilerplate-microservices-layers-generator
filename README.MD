@@ -167,4 +167,5 @@ Many-to-many relationships currently need to be properly implemented. The POST a
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-The code was structured focusing on separation of concerns so anyone can easily change something on each generator file without affecting the overall results it's also valid for input changes and for new languages support, just put your language and translations inside the language_dictionary.py file.
+The code was structured focusing on separation of concerns so anyone can easily change something on each generator file without affecting the overall results, this is also valid for input changes and for new languages support, just put your language and translations inside the language_dictionary.py file.
+The n-n relationship code generation is not implemented yet, feel free to do it yourself.
