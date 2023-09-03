@@ -113,7 +113,7 @@ def gather_inputs_gui(language=None):
 			data.update({
 				'group_name': group_name_entry.get(),
 				'entity_name': entity_name_entry.get(),
-				'language': language_entry.get(),
+				'language_dict': LocalizationDict(language_entry.get()),
 				'table_name': table_name_entry.get(),
 				'table_schema': table_schema_entry.get(),
 				'jdk_version': jdk_version_entry.get(),

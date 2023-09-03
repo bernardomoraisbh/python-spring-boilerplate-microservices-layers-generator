@@ -1,6 +1,7 @@
 import re
 from textwrap import dedent
 
+from language_dictionary import LocalizationDict
 from utils import camel_to_pascal, pascal_to_camel
 
 from .base_generator import BaseGenerator
@@ -8,15 +9,15 @@ from .base_generator import BaseGenerator
 
 class ServiceGenerator(BaseGenerator):
 
-	def __init__(self, group_name, entity_name, language, fields_input, table_name, table_schema, jdk_version, complete_package_path):
-		super().__init__(group_name, entity_name, language, fields_input, table_name, table_schema, jdk_version, complete_package_path)
+	def __init__(self, group_name: str, entity_name: str, language_dict: LocalizationDict, fields_input: str, table_name: str, table_schema: str, jdk_version: str, complete_package_path: str):
+		super().__init__(group_name, entity_name, language_dict, fields_input, table_name, table_schema, jdk_version, complete_package_path)
 
 	def generate(self):
 		service_name_pascal = camel_to_pascal(self.entity_name)
 		repo_name = f"{service_name_pascal}Repository"
 		repo_name_camel_case = pascal_to_camel(service_name_pascal)
 		repo_field_name = f"{repo_name_camel_case}Repository"
-		date_field = 'dataFim' if self.language == 'BR' else 'endDate'
+		date_field = self.language_dict.get_text('endDate')
 
 		service_code = dedent(f"""\
 				package {self.group_name}.services;
@@ -39,27 +40,27 @@ class ServiceGenerator(BaseGenerator):
 						@Autowired
 						private {repo_name} {repo_field_name};
 
-						public {service_name_pascal} {'buscarPorId' if self.language == 'BR' else 'findById'}(Long id) {{
+						public {service_name_pascal} {self.language_dict.get_text('findById')}(Long id) {{
 								return {repo_field_name}.findByIdAnd{camel_to_pascal(date_field)}
-										.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{service_name_pascal} {'não encontrado' if self.language == 'BR' else 'not found'}."));
+										.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{self.language_dict.get_text('not found')}."));
 						}}
 
-						public {service_name_pascal}VO {'buscarVoPorId' if self.language == 'BR' else 'findVoById'}(Long id) {{
-								return new {service_name_pascal}VO({'buscarPorId' if self.language == 'BR' else 'findById'}(id));
+						public {service_name_pascal}VO {self.language_dict.get_text('findVoById')}(Long id) {{
+								return new {service_name_pascal}VO({self.language_dict.get_text('findById')}(id));
 						}}
 
-						public Page<{service_name_pascal}> {'listarComFiltros' if self.language == 'BR' else 'findByFilters'}({service_name_pascal}Request request, Pageable pageable) {{
-								return {repo_field_name}.{'listarComFiltros' if self.language == 'BR' else 'findByFilters'}(request, pageable);
+						public Page<{service_name_pascal}> {self.language_dict.get_text('findByFilters')}({service_name_pascal}Request request, Pageable pageable) {{
+								return {repo_field_name}.{self.language_dict.get_text('findByFilters')}(request, pageable);
 						}}
 
-						public Page<{service_name_pascal}VO> {'listarVoFiltrado' if self.language == 'BR' else 'listVoWithFilters'}({service_name_pascal}Request request, Pageable pageable) {{
-								Page<{service_name_pascal}> entityList = {'listarComFiltros' if self.language == 'BR' else 'findByFilters'}(request, pageable);
+						public Page<{service_name_pascal}VO> {self.language_dict.get_text('listVoWithFilters')}({service_name_pascal}Request request, Pageable pageable) {{
+								Page<{service_name_pascal}> entityList = {self.language_dict.get_text('findByFilters')}(request, pageable);
 								return new PageImpl<>(entityList.stream().map(x -> new {service_name_pascal}VO(x)).collect(Collectors.toList()), pageable, entityList.getTotalElements());
 						}}
 
 						@Transactional
-						public void {'excluirLogicamente' if self.language == 'BR' else 'logicalDelete'}(Long id) {{
-								{repo_field_name}.{'excluirLogicamente' if self.language == 'BR' else 'logicalDelete'}(id);
+						public void {self.language_dict.get_text('logicalDelete')}(Long id) {{
+								{repo_field_name}.{self.language_dict.get_text('logicalDelete')}(id);
 						}}
 				}}
 		""")

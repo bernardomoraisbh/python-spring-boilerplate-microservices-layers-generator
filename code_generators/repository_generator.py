@@ -1,6 +1,7 @@
 import re
 from textwrap import dedent
 
+from language_dictionary import LocalizationDict
 from utils import camel_to_pascal
 
 from .base_generator import BaseGenerator
@@ -8,8 +9,8 @@ from .base_generator import BaseGenerator
 
 class RepositoryGenerator(BaseGenerator):
 
-	def __init__(self, group_name, entity_name, language, fields_input, table_name, table_schema, jdk_version, complete_package_path):
-		super().__init__(group_name, entity_name, language, fields_input, table_name, table_schema, jdk_version, complete_package_path)
+	def __init__(self, group_name: str, entity_name: str, language_dict: LocalizationDict, fields_input: str, table_name: str, table_schema: str, jdk_version: str, complete_package_path: str):
+		super().__init__(group_name, entity_name, language_dict, fields_input, table_name, table_schema, jdk_version, complete_package_path)
 
 	def base_repository_generator(self):
 		i_base_repository_code = dedent(f"""\
@@ -25,7 +26,7 @@ class RepositoryGenerator(BaseGenerator):
 				public interface BaseRepository<T, ID> extends JpaRepository<T, ID>, CrudRepository<T, ID> {{
 
 						@Query(value = "SELECT now() AT TIME ZONE 'UTC'", nativeQuery = true)
-						LocalDateTime {'retornarDataBanco' if self.language == 'BR' else 'getDatabaseTime'}();
+						LocalDateTime {self.language_dict.get_text('getDatabaseTime')}();
 				}}
 		""")
 		self.write_to_java_file(f"{self.complete_package_path}/repository", "BaseRepository", i_base_repository_code)
@@ -49,8 +50,8 @@ class RepositoryGenerator(BaseGenerator):
 		self.base_repository_generator()
 
 		repository_name_pascal = camel_to_pascal(self.entity_name)
-		method_name = 'listarComFiltros' if self.language == 'BR' else 'findByFilters'
-		date_field = 'dataFim' if self.language == 'BR' else 'endDate'
+		method_name = self.language_dict.get_text('findByFilters')
+		date_field = self.language_dict.get_text('endDate')
 
 		fields_code = f"\t\t\" WHERE 1=1 \" +\n\t\t\t\t\t\t\t\t\" AND {self.entity_name.lower()}.{date_field} IS NULL "
 
@@ -91,8 +92,8 @@ class RepositoryGenerator(BaseGenerator):
 						Optional<{repository_name_pascal}> findByIdAnd{camel_to_pascal(date_field)}IsNull(Long id);
 
 						@Modifying
-						@Query("UPDATE {repository_name_pascal} e SET e.{date_field} = :#{{#{'retornarDataBanco' if self.language == 'BR' else 'getDatabaseTime'}()}} WHERE e.id = :id")
-						void {'excluirLogicamente' if self.language == 'BR' else 'logicalDelete'}(@Param("id") Long id);
+						@Query("UPDATE {repository_name_pascal} e SET e.{date_field} = :#{{#{self.language_dict.get_text('getDatabaseTime')}()}} WHERE e.id = :id")
+						void {self.language_dict.get_text('logicalDelete')}(@Param("id") Long id);
 						{query_code}
 				}}
 		""")

@@ -5,6 +5,7 @@ from unittest.mock import patch
 sys.path.append("..")
 
 from code_generators.controller_generator import ControllerGenerator  # adjust this import based on your package structure
+from language_dictionary import LocalizationDict
 
 
 class TestControllerGeneratorBR(unittest.TestCase):
@@ -13,7 +14,7 @@ class TestControllerGeneratorBR(unittest.TestCase):
 		self.controller_generator = ControllerGenerator(
 			group_name='com.example',
 			entity_name='Person',
-			language='US',
+			language_dict=LocalizationDict('US'),
 			fields_input=[
 					{'type': 'String', 'name': 'firstName'},
 					{'type': 'Long', 'name': 'age'},
@@ -36,7 +37,7 @@ class TestControllerGeneratorUS(unittest.TestCase):
 		self.controller_generator = ControllerGenerator(
 			group_name='com.example',
 			entity_name='Person',
-			language='BR',
+			language_dict=LocalizationDict('BR'),
 			fields_input=[
 				{'type': 'String', 'name': 'firstName'},
 				{'type': 'Long', 'name': 'age'},

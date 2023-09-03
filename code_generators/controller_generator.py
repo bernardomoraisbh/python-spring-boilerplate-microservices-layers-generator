@@ -1,6 +1,7 @@
 import re
 from textwrap import dedent
 
+from language_dictionary import LocalizationDict
 from utils import camel_to_pascal, pascal_to_camel
 
 from .base_generator import BaseGenerator
@@ -8,8 +9,8 @@ from .base_generator import BaseGenerator
 
 class ControllerGenerator(BaseGenerator):
 
-	def __init__(self, group_name, entity_name, language, fields_input, table_name, table_schema, jdk_version, complete_package_path):
-		super().__init__(group_name, entity_name, language, fields_input, table_name, table_schema, jdk_version, complete_package_path)
+	def __init__(self, group_name: str, entity_name: str, language_dict: LocalizationDict, fields_input: str, table_name: str, table_schema: str, jdk_version: str, complete_package_path: str):
+		super().__init__(group_name, entity_name, language_dict, fields_input, table_name, table_schema, jdk_version, complete_package_path)
 
 	def generate(self):
 		entity_name_kebab = ''.join(word.lower() if i == 0 else '-' + word.lower() for i, word in enumerate(re.findall('[A-Z][^A-Z]*', self.entity_name)))
@@ -48,34 +49,34 @@ class ControllerGenerator(BaseGenerator):
 						private {service_name} {service_field_name};
 
 						@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-						public Page<{controller_name}VO> {'listarFiltrado' if self.language == 'BR' else 'listWithFilters'}({controller_name}Request request, @PageableDefault(sort = {{"id"}}, direction = Direction.DESC, size = Integer.MAX_VALUE) Pageable pageable) {{
-								logger.info("{controller_name}Controller.{'listarFiltrado' if self.language == 'BR' else 'listWithFilters'}()");
-								return {service_field_name}.{'listarVoFiltrado' if self.language == 'BR' else 'listVoWithFilters'}(request, pageable);
+						public Page<{controller_name}VO> {self.language_dict.get_text('listWithFilters')}({controller_name}Request request, @PageableDefault(sort = {{"id"}}, direction = Direction.DESC, size = Integer.MAX_VALUE) Pageable pageable) {{
+								logger.info("{controller_name}Controller.{self.language_dict.get_text('listWithFilters')}()");
+								return {service_field_name}.{self.language_dict.get_text('listVoWithFilters')}(request, pageable);
 						}}
 
 						@GetMapping(path = "/{{id}}", produces = MediaType.APPLICATION_JSON_VALUE)
-						public {controller_name}VO {'buscarPorId' if self.language == 'BR' else 'findById'}(@PathVariable Long id) {{
-								logger.info("{controller_name}Controller.{'buscarPorId' if self.language == 'BR' else 'findById'}({{}})", id);
-								return {service_field_name}.{'buscarVoPorId' if self.language == 'BR' else 'findVoById'}(id);
+						public {controller_name}VO {self.language_dict.get_text('findById')}(@PathVariable Long id) {{
+								logger.info("{controller_name}Controller.{self.language_dict.get_text('findById')}({{}})", id);
+								return {service_field_name}.{self.language_dict.get_text('findVoById')}(id);
 						}}
 
 						@PostMapping(path = "/{{id}}")
-						public void {'salvar' if self.language == 'BR' else 'saveEntity'}(@PathVariable Long id) {{
-								logger.info("{controller_name}Controller.{'salvar' if self.language == 'BR' else 'saveEntity'}({{}})", id);
+						public void {self.language_dict.get_text('saveEntity')}(@PathVariable Long id) {{
+								logger.info("{controller_name}Controller.{self.language_dict.get_text('saveEntity')}({{}})", id);
 								// TODO - TODO
 						}}
 
 						@PutMapping(path = "/{{id}}")
-						public void {'editar' if self.language == 'BR' else 'updateEntity'}(@PathVariable Long id) {{
-								logger.info("{controller_name}Controller.{'editar' if self.language == 'BR' else 'updateEntity'}({{}})", id);
+						public void {self.language_dict.get_text('updateEntity')}(@PathVariable Long id) {{
+								logger.info("{controller_name}Controller.{self.language_dict.get_text('updateEntity')}({{}})", id);
 								// TODO - TODO
 						}}
 
 						@DeleteMapping(path = "/{{id}}")
 						@ResponseStatus(HttpStatus.ACCEPTED)
-						public void {'excluir' if self.language == 'BR' else 'deleteEntity'}(@PathVariable Long id) {{
-								logger.info("{controller_name}Controller.{'excluir' if self.language == 'BR' else 'deleteEntity'}({{}})", id);
-								{service_field_name}.{'excluirLogicamente' if self.language == 'BR' else 'logicalDelete'}(id);
+						public void {self.language_dict.get_text('deleteEntity')}(@PathVariable Long id) {{
+								logger.info("{controller_name}Controller.{self.language_dict.get_text('deleteEntity')}({{}})", id);
+								{service_field_name}.{self.language_dict.get_text('logicalDelete')}(id);
 						}}
 				}}
 		""")

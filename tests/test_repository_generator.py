@@ -5,6 +5,7 @@ from unittest.mock import patch
 sys.path.append("..")
 
 from code_generators.repository_generator import RepositoryGenerator  # adjust this import based on your package structure
+from language_dictionary import LocalizationDict
 
 
 class TestRepositoryGeneratorUS(unittest.TestCase):
@@ -13,7 +14,7 @@ class TestRepositoryGeneratorUS(unittest.TestCase):
 		self.repo_generator = RepositoryGenerator(
 			group_name='com.example',
 			entity_name='Person',
-			language='US',
+			language_dict=LocalizationDict('US'),
 			fields_input=[
 					{'type': 'String', 'name': 'firstName'},
 					{'type': 'Long', 'name': 'age'},
@@ -47,7 +48,7 @@ class TestRepositoryGeneratorBR(unittest.TestCase):
 		self.repo_generator = RepositoryGenerator(
 			group_name='com.example',
 			entity_name='Person',
-			language='BR',
+			language_dict=LocalizationDict('BR'),
 			fields_input=[
 					{'type': 'String', 'name': 'firstName'},
 					{'type': 'Long', 'name': 'age'},

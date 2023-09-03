@@ -1,16 +1,16 @@
 # base_generator.py
 import os
 
-from utils import camel_to_pascal
+from language_dictionary import LocalizationDict
 
 
 class BaseGenerator:
 
-	def __init__(self, group_name, entity_name, language, fields_input, table_name, table_schema, jdk_version, complete_package_path):
+	def __init__(self, group_name: str, entity_name: str, language_dict: LocalizationDict, fields_input: str, table_name: str, table_schema: str, jdk_version: str, complete_package_path: str):
 		self.group_name = group_name
 		self.entity_name = entity_name
-		self.language = language
-		self.fields_input = fields_input # Expected to be a list of dictionaries
+		self.language_dict = language_dict # Expected to be a LocalizationDict object from the language_dictionary.py file
+		self.fields_input = fields_input   # Expected to be a list of dictionaries
 		self.table_name = table_name
 		self.table_schema = table_schema
 		self.jdk_version = jdk_version

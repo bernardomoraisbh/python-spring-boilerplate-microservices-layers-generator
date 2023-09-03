@@ -1,6 +1,7 @@
 from textwrap import dedent
 
 from __init__ import _4_TABS, COMMON_JAVA_TYPES, EMPTY
+from language_dictionary import LocalizationDict
 from utils import camel_to_pascal
 
 from .base_generator import BaseGenerator
@@ -8,8 +9,8 @@ from .base_generator import BaseGenerator
 
 class RequestGenerator(BaseGenerator):
 
-	def __init__(self, group_name, entity_name, language, fields_input, table_name, table_schema, jdk_version, complete_package_path):
-		super().__init__(group_name, entity_name, language, fields_input, table_name, table_schema, jdk_version, complete_package_path)
+	def __init__(self, group_name: str, entity_name: str, language_dict: LocalizationDict, fields_input: str, table_name: str, table_schema: str, jdk_version: str, complete_package_path: str):
+		super().__init__(group_name, entity_name, language_dict, fields_input, table_name, table_schema, jdk_version, complete_package_path)
 
 	def generate(self):
 		request_name_pascal = camel_to_pascal(self.entity_name)

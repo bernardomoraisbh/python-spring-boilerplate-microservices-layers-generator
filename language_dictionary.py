@@ -9,6 +9,19 @@ BR = {
 	"Add Field": "Adicionar Campo",
 	"Generate Files": "Gerar Arquivos",
 	"Error": "Erro",
+	"version": "versao",
+	"getDatabaseTime": "retornarDataBanco",
+	"findByFilters": "listarComFiltros",
+	"endDate": "dataFim",
+	"logicalDelete": "excluirLogicamente",
+	"findById": "buscarPorId",
+	"findVoById": "buscarVoPorId",
+	"listVoWithFilters": "listarVoFiltrado",
+	"listWithFilters": "listarFiltrado",
+	"saveEntity": "salvar",
+	"updateEntity": "editar",
+	"deleteEntity": "excluir",
+	"not found": "não encontrado"
 	# Add more as needed...
 }
 
@@ -32,3 +45,8 @@ class LocalizationDict:
 		initially provided language."""
 		return self.localization_dict.get(key, key)
 
+	def __eq__(self, other):
+		"""Overrides the default implementation of equality method."""
+		if isinstance(other, LocalizationDict):
+			return self.language == other.language and self.localization_dict == other.localization_dict
+		return False

@@ -5,6 +5,7 @@ from unittest.mock import patch
 sys.path.append("..")
 
 from code_generators.vo_generator import VoGenerator  # adjust this import based on your package structure
+from language_dictionary import LocalizationDict
 
 
 class TestVoGeneratorUS(unittest.TestCase):
@@ -13,7 +14,7 @@ class TestVoGeneratorUS(unittest.TestCase):
 		self.vo_generator = VoGenerator(
 			group_name='com.example',
 			entity_name='PersonHistory',
-			language='US',
+			language_dict=LocalizationDict('US'),
 			fields_input=[
 				{'type': 'String', 'name': 'firstName'},
 				{'type': 'Long', 'name': 'age'},
@@ -36,7 +37,7 @@ class TestVoGeneratorBR(unittest.TestCase):
 		self.vo_generator = VoGenerator(
 			group_name='com.example',
 			entity_name='PersonHistory',
-			language='BR',
+			language_dict=LocalizationDict('BR'),
 			fields_input=[
 				{'type': 'String', 'name': 'firstName'},
 				{'type': 'Long', 'name': 'age'},

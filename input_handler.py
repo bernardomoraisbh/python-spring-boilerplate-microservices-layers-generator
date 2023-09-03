@@ -2,8 +2,13 @@ import argparse
 import re
 
 from gui_input_handler import gather_inputs_gui
+from language_dictionary import LocalizationDict
 from utils import camel_to_snake
 
+
+def find_match(pattern, text):
+	match = re.search(pattern, text)
+	return match.group(1).strip() if match else None
 
 def parse_arguments():
 	"""Function used to read the execution program args."""
@@ -28,12 +33,10 @@ def parse_fields(fields):
 		field_dict['name'] = attr_name.strip()
 
 		# Extract column name if exists
-		match_column = re.search(r'\[(.*?)\]', field)
-		field_dict['column_name'] = match_column.group(1).strip() if match_column else None
+		field_dict['column_name'] = find_match(r'\[(.*?)\]', field)
 
 		# Extract join details if exists
-		match_join = re.search(r'\{(.*?)\}', field)
-		field_dict['join_details'] = match_join.group(1).strip() if match_join else None
+		field_dict['join_details'] = find_match(r'\{(.*?)\}', field)
 
 		parsed_fields.append(field_dict)
 	return parsed_fields
@@ -95,7 +98,7 @@ def gather_inputs(input_function=input, version=None, language=None):
 	return {
 		'group_name': group_name,
 		'entity_name': entity_name,
-		'language': language,
+		'language_dict': LocalizationDict(language),
 		'fields_input': fields,
 		'table_name': table_name,
 		'table_schema': table_schema,

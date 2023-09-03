@@ -3,6 +3,7 @@ import re
 from textwrap import dedent
 
 from __init__ import _4_TABS, EMPTY
+from language_dictionary import LocalizationDict
 from utils import camel_to_pascal, camel_to_snake
 
 from .base_generator import BaseGenerator
@@ -10,8 +11,8 @@ from .base_generator import BaseGenerator
 
 class EntityGenerator(BaseGenerator):
 
-	def __init__(self, group_name, entity_name, language, fields_input, table_name, table_schema, jdk_version, complete_package_path):
-		super().__init__(group_name, entity_name, language, fields_input, table_name, table_schema, jdk_version, complete_package_path)
+	def __init__(self, group_name: str, entity_name: str, language_dict: LocalizationDict, fields_input: str, table_name: str, table_schema: str, jdk_version: str, complete_package_path: str):
+		super().__init__(group_name, entity_name, language_dict, fields_input, table_name, table_schema, jdk_version, complete_package_path)
 
 	def temporal_annotation(self, attribute_name):
 		temporal_annotation = ""
@@ -65,7 +66,7 @@ class EntityGenerator(BaseGenerator):
 		annotations_package = "javax.persistence" if self.jdk_version == "11" else "jakarta.persistence"
 		entity_name_pascal = camel_to_pascal(self.entity_name)
 
-		version_field = "versao" if self.language == "BR" else "version"
+		version_field = self.language_dict.get_text("version")
 
 		entity_code = dedent(f"""\
 				package {self.group_name}.entity;

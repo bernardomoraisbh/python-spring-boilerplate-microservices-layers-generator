@@ -5,7 +5,7 @@ from unittest.mock import patch
 sys.path.append("..")
 
 from code_generators.entity_generator import EntityGenerator
-from input_handler import gather_inputs
+from language_dictionary import LocalizationDict
 
 
 class TestEntityGenerator(unittest.TestCase):
@@ -14,7 +14,7 @@ class TestEntityGenerator(unittest.TestCase):
 		self.entity_generator = EntityGenerator(
 			group_name='com.example',
 			entity_name='personHistory',
-			language='US',
+			language_dict=LocalizationDict('US'),
 			fields_input=[
 				{'type': 'String', 'name': 'firstName', 'column_name': 'first_name', 'join_details': None},
 				{'type': 'Long', 'name': 'age', 'column_name': None, 'join_details': None},
