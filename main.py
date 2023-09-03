@@ -1,3 +1,5 @@
+import argparse
+
 from code_generators.controller_generator import ControllerGenerator
 from code_generators.entity_generator import EntityGenerator
 from code_generators.repository_generator import RepositoryGenerator
@@ -5,7 +7,7 @@ from code_generators.request_generator import RequestGenerator
 from code_generators.service_generator import ServiceGenerator
 from code_generators.vo_generator import VoGenerator
 from directory_handler import create_directories
-from input_handler import gather_inputs
+from input_handler import gather_inputs, parse_arguments
 
 # Example usage:
 # group_name = "com.example"
@@ -20,7 +22,11 @@ from input_handler import gather_inputs
 # Many to Many needs to be fixed
 
 def main():
-	user_inputs = gather_inputs()
+	language, version = parse_arguments()
+	user_inputs = gather_inputs(version=version, language=language)
+	if user_inputs is None:
+		print("Operation cancelled by the user.")
+		return
 	complete_package_path = create_directories(user_inputs['group_name'].replace('.', '-'), user_inputs['group_name'])
 
 	# Create a list of generator classes to iterate through

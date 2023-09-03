@@ -1,8 +1,16 @@
+import argparse
 import re
 
 from gui_input_handler import gather_inputs_gui
 from utils import camel_to_snake
 
+
+def parse_arguments():
+	parser = argparse.ArgumentParser(description="Specify language and input version.")
+	parser.add_argument("language", nargs='?', default=None, choices=["US", "BR"], help="Language to use: US or BR")
+	parser.add_argument("version", nargs='?', default=None, choices=["v1", "v2", "v3"], help="Input version to use: v1, v2, or v3")
+	args = parser.parse_args()
+	return args.language, args.version
 
 def parse_fields(fields):
 	parsed_fields = []
@@ -43,15 +51,19 @@ def gather_single_field_input(input_function=input):
 
 	return field_dict
 
-def gather_inputs(input_function=input):
+def gather_inputs(input_function=input, version=None, language=None):
+	if version is None:
+		version = input_function("Which version do you want to use? (v1/v2/v3): ").strip()
 
-	version = input_function("Which version do you want to use? (v1/v2/v3): ").strip()
 	if version == "v3":
-		return gather_inputs_gui()
+		return gather_inputs_gui(language=language)
 
 	group_name = input_function("Enter the group project name (dots-separated): ").strip()
 	entity_name = input_function("Enter the entity name (Pascal case): ").strip()
-	language = input_function("Enter the language (US/BR): ").strip()
+
+	if language is None:
+		language = input_function("Enter the language (US/BR): ").strip()
+
 	table_name = input_function("Enter the table name (snake case): ").strip()
 	table_schema = input_function("Enter the table schema: ").strip()
 	jdk_version = input_function("Enter the JDK version (11/17): ").strip()

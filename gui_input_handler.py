@@ -8,7 +8,29 @@ data = {}
 fields = []
 font=("Arial", 20)
 
-def gather_inputs_gui():
+def get_localization_dict(language):
+	if language == "BR":
+		return {
+			"Group Project Name": "Nome do Grupo de Projeto",
+			"Entity Name": "Nome da Entidade",
+			"Language": "Idioma",
+			"Table Name": "Nome da Tabela",
+			"Table Schema": "Esquema da Tabela",
+			"JDK Version": "Versão do JDK",
+			"Add Field": "Adicionar Campo",
+			"Generate Files": "Gerar Arquivos",
+			"Error": "Erro",
+			# Add more as needed...
+		}
+	else:
+		return {}  # For "US", no translation needed
+
+def gather_inputs_gui(language=None):
+
+	localization_dict = get_localization_dict(language)
+
+	def get_text(key):
+		return localization_dict.get(key, key)
 
 	def _on_mousewheel(event):
 		canvas.yview_scroll(-1*(event.delta//120), "units")
@@ -19,23 +41,23 @@ def gather_inputs_gui():
 
 		ttk.Label(field_frame, text=f"Field {len(fields) + 1}", style="Large.TLabel").grid(row=0, column=0, columnspan=4)
 
-		ttk.Label(field_frame, text="Type: ", style="Large.TLabel").grid(row=1, column=0)
+		ttk.Label(field_frame, text=get_text("Type: "), style="Large.TLabel").grid(row=1, column=0)
 		type_entry = ttk.Entry(field_frame, font=font)
 		type_entry.grid(row=1, column=1)
 
-		ttk.Label(field_frame, text="Name: ", style="Large.TLabel").grid(row=1, column=2)
+		ttk.Label(field_frame, text=get_text("Name: "), style="Large.TLabel").grid(row=1, column=2)
 		name_entry = ttk.Entry(field_frame, font=font)
 		name_entry.grid(row=1, column=3)
 
-		ttk.Label(field_frame, text="Column Name: ", style="Large.TLabel").grid(row=2, column=0)
+		ttk.Label(field_frame, text=get_text("Column Name: "), style="Large.TLabel").grid(row=2, column=0)
 		column_name_entry = ttk.Entry(field_frame, font=font)
 		column_name_entry.grid(row=2, column=1)
 
-		ttk.Label(field_frame, text="Join Details: ", style="Large.TLabel").grid(row=2, column=2)
+		ttk.Label(field_frame, text=get_text("Join Details: "), style="Large.TLabel").grid(row=2, column=2)
 		join_details_entry = ttk.Entry(field_frame, font=font)
 		join_details_entry.grid(row=2, column=3)
 
-		ttk.Label(field_frame, text="Join Column Name: ", style="Large.TLabel").grid(row=3, column=0)
+		ttk.Label(field_frame, text=get_text("Join Column Name: "), style="Large.TLabel").grid(row=3, column=0)
 		join_column_name_entry = ttk.Entry(field_frame, font=font)
 		join_column_name_entry.grid(row=3, column=1)
 
@@ -137,44 +159,38 @@ def gather_inputs_gui():
 
 	root.title("Input Fields")
 
-	group_name_label = ttk.Label(root, style="Large.TLabel", text="Group Project Name:")
+	group_name_label = ttk.Label(root, style="Large.TLabel", text=get_text("Group Project Name"))
 	group_name_entry = ttk.Entry(root, font=font)
 	group_name_label.grid(row=0, column=0)
 	group_name_entry.grid(row=0, column=1)
 
-	entity_name_label = ttk.Label(root, style="Large.TLabel", text="Entity Name:")
+	entity_name_label = ttk.Label(root, style="Large.TLabel", text=get_text("Entity Name:"))
 	entity_name_entry = ttk.Entry(root, font=font)
 	entity_name_label.grid(row=1, column=0)
 	entity_name_entry.grid(row=1, column=1)
 
-	language_label = ttk.Label(root, style="Large.TLabel", text="Language:")
+	language_label = ttk.Label(root, style="Large.TLabel", text=get_text("Language:"))
 	language_entry = ttk.Entry(root, font=font)
 	language_label.grid(row=2, column=0)
 	language_entry.grid(row=2, column=1)
 
-	table_name_label = ttk.Label(root, style="Large.TLabel", text="Table Name:")
+	table_name_label = ttk.Label(root, style="Large.TLabel", text=get_text("Table Name:"))
 	table_name_entry = ttk.Entry(root, font=font)
 	table_name_label.grid(row=3, column=0)
 	table_name_entry.grid(row=3, column=1)
 
-	table_schema_label = ttk.Label(root, style="Large.TLabel", text="Table Schema:")
+	table_schema_label = ttk.Label(root, style="Large.TLabel", text=get_text("Table Schema:"))
 	table_schema_entry = ttk.Entry(root, font=font)
 	table_schema_label.grid(row=4, column=0)
 	table_schema_entry.grid(row=4, column=1)
 
-	jdk_version_label = ttk.Label(root, style="Large.TLabel", text="JDK Version:")
-	jdk_version_entry = ttk.Entry(root, )
+	jdk_version_label = ttk.Label(root, style="Large.TLabel", text=get_text("JDK Version:"))
+	jdk_version_entry = ttk.Entry(root, font=font)
 	jdk_version_label.grid(row=5, column=0)
 	jdk_version_entry.grid(row=5, column=1)
 
-	fields_frame = ttk.LabelFrame(root, text="Fields")
+	fields_frame = ttk.LabelFrame(root, text=get_text("Fields"))
 	fields_frame.grid(row=6, columnspan=2, sticky="w")
-
-	add_field_button = ttk.Button(root, text="Add Field", style="Large.TButton", command=add_field)
-	add_field_button.grid(row=7, column=0, sticky="w")
-
-	submit_button = ttk.Button(root, text="Submit", style="Large.TButton", command=submit)
-	submit_button.grid(row=7, column=1, sticky="e")
 
 	# Create the outer frame
 	outer_frame = ttk.Frame(root)
@@ -193,10 +209,10 @@ def gather_inputs_gui():
 	canvas.configure(yscrollcommand=scrollbar.set)
 	canvas.bind_all("<MouseWheel>", _on_mousewheel)
 
-	add_field_button = ttk.Button(root, text="Add Field", style="Large.TButton", command=add_field)
+	add_field_button = ttk.Button(root, text=get_text("Add Field"), style="Large.TButton", command=add_field)
 	add_field_button.grid(row=7, column=0, sticky="w")
 
-	submit_button = ttk.Button(root, text="Submit", style="Large.TButton", command=submit)
+	submit_button = ttk.Button(root, text=get_text("Generate Files"), style="Large.TButton", command=submit)
 	submit_button.grid(row=7, column=1, sticky="e")
 
 	root.mainloop()
