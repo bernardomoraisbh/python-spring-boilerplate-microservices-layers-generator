@@ -136,6 +136,9 @@ def gather_inputs_gui(language=None):
 				}
 
 				# Optional fields
+				field_dict['column_name'] = None
+				field_dict['join_details'] = None
+				field_dict['join_column_name'] = None
 				optional_entries = entries[2:]
 				if len(optional_entries) > 0:
 						field_dict['column_name'] = optional_entries[0].get() if optional_entries[0] else None
@@ -170,6 +173,7 @@ def gather_inputs_gui(language=None):
 
 	language_label = ttk.Label(root, style=labelStyle, text=language_dict.get_text("Language:"))
 	language_entry = ttk.Entry(root, font=font)
+	language_entry.insert(0, language)
 	language_label.grid(row=2, column=0)
 	language_entry.grid(row=2, column=1)
 

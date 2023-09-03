@@ -29,7 +29,8 @@ BR = {
 	"Name: ": "Nome: ",
 	"Join Cardinality: ": "Cardinalidade do Join: ",
 	"Join Column Name: ": "Nome da coluna do Join: ",
-	"Remove": "Remover"
+	"Remove": "Remover",
+	"Successfully generated the CRUD files." : "CRUD gerado com sucesso.",
 	# Add more as needed...
 }
 
