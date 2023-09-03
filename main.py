@@ -44,7 +44,7 @@ def main():
 		generator_instance = generator_class(
 				group_name=user_inputs['group_name'],
 				entity_name=user_inputs['entity_name'],
-				language=user_inputs['language'],
+				language_dict=user_inputs['language_dict'],
 				fields_input=user_inputs['fields_input'],
 				table_name=user_inputs['table_name'],
 				table_schema=user_inputs['table_schema'],

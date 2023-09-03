@@ -89,21 +89,27 @@ def gather_inputs_gui(language=None):
 			messagebox.showerror(language_dict.get_text("Error"), "Field jdk version must be either '11' or '17'!")
 			return False
 
-		for field_frame, type_entry, name_entry, column_name_entry, join_details_entry, join_column_name_entry in fields:
-			type_value = type_entry.get().strip()
-			name_value = name_entry.get().strip()
-			column_name = column_name_entry.get(),
-			join_details =  join_details_entry.get(),
-			join_column_name = join_column_name_entry.get()
+		for field_frame in fields:
+			_frame, *entries = field_frame  # unpack frame and entries
+
+			# Get the mandatory entries and their values
+			mandatory_entries = entries[:2]
+			type_value, name_value = (entry.get().strip() for entry in mandatory_entries)
 
 			if not type_value or not name_value:
 				messagebox.showerror(language_dict.get_text("Error"), "Fields type value and name value cannot be empty!")
 				return False
-			elif not join_details and join_column_name:
-				messagebox.showerror(language_dict.get_text("Error"), "When join column is present, join details name must be present!")
-				return False
-			elif join_details and not join_column_name:
-				messagebox.showerror(language_dict.get_text("Error"), "When join details is present, join column name must be present!")
+
+			# For optional entries
+			optional_entries = entries[2:]
+			join_details, join_column_name = (None, None)
+			if len(optional_entries) > 0:
+				join_details = optional_entries[0].get().strip() if optional_entries[0] else None
+			if len(optional_entries) > 1:
+				join_column_name = optional_entries[1].get().strip() if optional_entries[1] else None
+
+			if bool(join_details) != bool(join_column_name):
+				messagebox.showerror(language_dict.get_text("Error"), "Both join details and join column name must be present together!")
 				return False
 
 		return True
@@ -120,15 +126,24 @@ def gather_inputs_gui(language=None):
 			})
 
 			data['fields_input'] = []
-			for type_entry, name_entry, column_name_entry, join_details_entry, join_column_name_entry in fields:
+			for field_frame in fields:
+				_frame, *entries = field_frame  # unpack frame and entries
+
+				# Mandatory fields
 				field_dict = {
-					'type': type_entry.get(),
-					'name': name_entry.get(),
-					'column_name': column_name_entry.get(),
-					'join_details': join_details_entry.get(),
-					'join_column_name': join_column_name_entry.get()
-					# Add other attributes as needed
+						'type': entries[0].get(),
+						'name': entries[1].get(),
 				}
+
+				# Optional fields
+				optional_entries = entries[2:]
+				if len(optional_entries) > 0:
+						field_dict['column_name'] = optional_entries[0].get() if optional_entries[0] else None
+				if len(optional_entries) > 1:
+						field_dict['join_details'] = optional_entries[1].get() if optional_entries[1] else None
+				if len(optional_entries) > 2:
+						field_dict['join_column_name'] = optional_entries[2].get() if optional_entries[2] else None
+
 				data['fields_input'].append(field_dict)
 			root.quit()
 
