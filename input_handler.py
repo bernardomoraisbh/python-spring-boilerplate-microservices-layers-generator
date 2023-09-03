@@ -1,6 +1,7 @@
 import re
 
-from utils import camel_to_kebab, camel_to_snake
+from gui_input_handler import gather_inputs_gui
+from utils import camel_to_snake
 
 
 def parse_fields(fields):
@@ -44,7 +45,9 @@ def gather_single_field_input(input_function=input):
 
 def gather_inputs(input_function=input):
 
-	version = input_function("Which version do you want to use? (v1/v2): ").strip()
+	version = input_function("Which version do you want to use? (v1/v2/v3): ").strip()
+	if version == "v3":
+		return gather_inputs_gui()
 
 	group_name = input_function("Enter the group project name (dots-separated): ").strip()
 	entity_name = input_function("Enter the entity name (Pascal case): ").strip()
