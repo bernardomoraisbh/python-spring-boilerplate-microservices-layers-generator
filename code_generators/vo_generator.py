@@ -1,5 +1,6 @@
 from textwrap import dedent
 
+from __init__ import _6_TABS, EMPTY
 from utils import camel_to_pascal, pascal_to_camel
 
 from .base_generator import BaseGenerator
@@ -19,20 +20,13 @@ class VoGenerator(BaseGenerator):
 
 	def generate(self):
 		fields_code = ""
-		empty_tabs_size = ""
-		tabs_size = "\t\t\t\t\t\t"
 		vo_name_pascal = camel_to_pascal(self.entity_name)
 
 		for f in self.fields_input:
-			field_type = f.split('-')[0]
-			attribute_name = f.split('-')[1].split('[')[0]
+			field_type = f['type']
+			attribute_name = f['name']
 
-			if len(fields_code) == 0:
-					current_tabs_size = empty_tabs_size
-			else:
-					current_tabs_size = tabs_size
-
-			field_line = f"{empty_tabs_size if len(fields_code) == 0 else tabs_size}private {field_type} {attribute_name};"
+			field_line = f"{EMPTY if len(fields_code) == 0 else _6_TABS}private {field_type} {attribute_name};"
 			fields_code += field_line + '\n'
 
 		fields_code = fields_code.rstrip('\n')
@@ -40,7 +34,7 @@ class VoGenerator(BaseGenerator):
 		constructor_code = f"public {vo_name_pascal}VO({vo_name_pascal} entity) {{\n"
 		constructor_code += "\t\t\t\t\t\t\tif (entity == null) return;\n"
 		for field in self.fields_input:
-			field_name = field.split('-')[1].split('[')[0]
+			field_name = field['name']
 			constructor_code += f"\t\t\t\t\t\t\tset{field_name[0].upper() + field_name[1:]}(entity.get{field_name[0].upper() + field_name[1:]}());\n"
 		constructor_code += "\t\t\t\t\t\t}"
 
@@ -59,9 +53,9 @@ class VoGenerator(BaseGenerator):
 				@JsonIgnoreProperties(ignoreUnknown = true)
 				public class {vo_name_pascal}VO {{
 
-						{fields_code}
+								{fields_code}
 
-						{constructor_code}
+								{constructor_code}
 				}}
 		""")
 		self.write_to_java_file(f"{self.complete_package_path}/vo", f"{vo_name_pascal}VO", vo_code)

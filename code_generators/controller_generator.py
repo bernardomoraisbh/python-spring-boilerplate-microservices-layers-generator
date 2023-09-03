@@ -61,8 +61,8 @@ class ControllerGenerator(BaseGenerator):
 						}}
 
 						@GetMapping(path = "/{{id}}", produces = MediaType.APPLICATION_JSON_VALUE)
-						public {controller_name}VO getSingleEntity(@PathVariable Long id) {{
-								logger.info("{controller_name}Controller.{'listar' if self.language == 'BR' else 'listAll'}({{}})", id);
+						public {controller_name}VO {'buscarPorId' if self.language == 'BR' else 'findById'}(@PathVariable Long id) {{
+								logger.info("{controller_name}Controller.{'buscarPorId' if self.language == 'BR' else 'findById'}({{}})", id);
 								return {service_field_name}.{'buscarVoPorId' if self.language == 'BR' else 'findVoById'}(id);
 						}}
 

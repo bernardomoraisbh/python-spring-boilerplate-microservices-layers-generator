@@ -1,6 +1,6 @@
 from textwrap import dedent
 
-from __init__ import COMMON_JAVA_TYPES
+from __init__ import _4_TABS, COMMON_JAVA_TYPES, EMPTY
 from utils import camel_to_pascal
 
 from .base_generator import BaseGenerator
@@ -21,20 +21,22 @@ class RequestGenerator(BaseGenerator):
 	def generate(self):
 		request_name_pascal = camel_to_pascal(self.entity_name)
 		fields_code = []
-		empty_tabs_size = ""
-		tabs_size = "\t\t\t\t"
-		for f in self.fields_input:
-			f_type, f_name = f.split('-')[0], f.split('-')[1].split('[')[0]
+
+		for field in self.fields_input:
+			f_type = field['type']
+			f_name = field['name']
 
 			if f_type not in COMMON_JAVA_TYPES:
-					if f_type.startswith(("List<", "Set<", "ArrayList<")):
-							f_type = "List<Long>"
-							f_name = f"ids{camel_to_pascal(f_name)}"
-					else:
-							f_type = "Long"
-							f_name = f"id{camel_to_pascal(f_name)}"
+				if f_type.startswith(("List<", "Set<", "ArrayList<")):
+					f_type = "List<Long>"
+					f_name = f"ids{camel_to_pascal(f_name)}"
+				elif f_type.startswith("Enum"):
+					continue
+				else:
+					f_type = "Long"
+					f_name = f"id{camel_to_pascal(f_name)}"
 
-			fields_code.append(f"{empty_tabs_size if len(fields_code) == 0 else tabs_size}private {f_type} {f_name};")
+			fields_code.append(f"{EMPTY if len(fields_code) == 0 else _4_TABS}private {f_type} {f_name};")
 
 		fields_code = '\n\t\t'.join(fields_code)
 

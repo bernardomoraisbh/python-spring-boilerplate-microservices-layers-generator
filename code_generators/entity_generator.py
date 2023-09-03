@@ -2,6 +2,7 @@
 import re
 from textwrap import dedent
 
+from __init__ import _4_TABS, EMPTY
 from utils import camel_to_pascal, camel_to_snake
 
 from .base_generator import BaseGenerator
@@ -19,59 +20,58 @@ class EntityGenerator(BaseGenerator):
 		self.jdk_version = jdk_version
 		self.complete_package_path = complete_package_path
 
+	def temporal_annotation(self, attribute_name):
+		temporal_annotation = ""
+		if "Date" in attribute_name or "Data" in attribute_name or "date" in attribute_name or "data" in attribute_name:
+			temporal_annotation = '@Temporal(TemporalType.TIMESTAMP)'
+		return temporal_annotation
+
+	def parse_join(self, field_dict, field_code_lines, attribute_name):
+		join_details = field_dict['join_details']
+		join_annotation = ""
+
+		if join_details:
+			if ',' not in join_details:
+				print(f"Warning: Invalid join_details format for {field_dict['name']}. Expected 'type,column', got '{join_details}'")
+				return
+			join_type, join_column_name = join_details.split(",")
+
+			if join_type == "1-1":
+					join_annotation = f'@OneToOne(fetch = FetchType.LAZY)\n				@JoinColumn(name = "{join_column_name}")'
+			elif join_type == "1-n":
+					join_annotation = f'@OneToMany(mappedBy = "{attribute_name}", fetch = FetchType.LAZY, cascade = {{CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}}, orphanRemoval = true)'
+			elif join_type == "n-1":
+					join_annotation = f'@ManyToOne(fetch = FetchType.LAZY)\n				@JoinColumn(name = "{join_column_name}")'
+			elif join_type == "n-n":
+					join_annotation = f'@ManyToMany(fetch = FetchType.LAZY)\n				@JoinColumn(name = "{join_column_name}")'
+
+		if join_annotation:
+			field_code_lines.append(f"{EMPTY if len(field_code_lines) == 0 else _4_TABS}{join_annotation}")
+
+	def generate_field_code(self):
+		field_code_lines = []
+		for field_dict in self.fields_input:
+			field_type = field_dict['type']
+			attribute_name = field_dict['name']
+			column_name = field_dict['column_name'] if field_dict['column_name'] else camel_to_snake(attribute_name)
+
+			temporal_annotation = self.temporal_annotation(attribute_name)
+
+			self.parse_join(field_dict, field_code_lines, attribute_name)
+			field_code_lines.append(f"{EMPTY if len(field_code_lines) == 0 else _4_TABS}@Column(name = \"{column_name}\")")
+
+			if temporal_annotation:
+				field_code_lines.append(f"{EMPTY if len(field_code_lines) == 0 else _4_TABS}{temporal_annotation}")
+
+			field_code_lines.append(f"{EMPTY if len(field_code_lines) == 0 else _4_TABS}private {field_type} {attribute_name};")
+
+		field_code = "\n".join(field_code_lines).replace(";\n", ";\n\n\t\t").replace(")\n", ")\n\t\t")
+		return field_code
+
 	def generate(self):
 		annotations_package = "javax.persistence" if self.jdk_version == "11" else "jakarta.persistence"
-		field_code = ""
-		field_code_lines = []
-		empty_tabs_size = ""
-		tabs_size = "\t\t\t\t"
 		entity_name_pascal = camel_to_pascal(self.entity_name)
 
-		for field in self.fields_input:
-				parts = field.split("-")
-				field_type = parts[0]
-				attr_and_column = parts[1]
-
-				attribute_parts = attr_and_column.split("[")
-				attribute_name = attribute_parts[0]
-
-				column_name = attribute_parts[1][:-1] if '[' in attr_and_column and ']' in attr_and_column else camel_to_snake(attribute_name)
-				join_details = None
-
-				if "{" in attr_and_column and "}" in attr_and_column:
-						join_details = re.search(r"\{(.+?)\}", attr_and_column).group(1).split(",")
-
-				if "Date" in attribute_name or "Data" in attribute_name or "date" in attribute_name or "data" in attribute_name:
-						field_type = "LocalDateTime"
-						temporal_annotation = f'@Temporal(TemporalType.TIMESTAMP)'
-				else:
-						temporal_annotation = ""
-
-				join_annotation = ""
-
-				if join_details:
-						join_type = join_details[0]
-						join_column_name = join_details[1] if len(join_details) > 1 else column_name
-
-						if join_type == "1-1":
-								join_annotation = f'@OneToOne(fetch = FetchType.LAZY)\n				@JoinColumn(name = "{join_column_name}")'
-						elif join_type == "1-n":
-								join_annotation = f'@OneToMany(mappedBy = "{attribute_name}", fetch = FetchType.LAZY, cascade = {{CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}}, orphanRemoval = true)'
-						elif join_type == "n-1":
-								join_annotation = f'@ManyToOne(fetch = FetchType.LAZY)\n				@JoinColumn(name = "{join_column_name}")'
-						elif join_type == "n-n":
-								join_annotation = f'@ManyToMany(fetch = FetchType.LAZY)\n				@JoinColumn(name = "{join_column_name}")'
-
-				if join_annotation:
-						field_code_lines.append(f"{empty_tabs_size if len(field_code_lines) == 0 else tabs_size}{join_annotation}")
-				field_code_lines.append(f"{empty_tabs_size if len(field_code_lines) == 0 else tabs_size}@Column(name = \"{column_name}\")")
-				if temporal_annotation:
-						field_code_lines.append(f"{empty_tabs_size if len(field_code_lines) == 0 else tabs_size}{temporal_annotation}")
-				field_code_lines.append(f"{empty_tabs_size if len(field_code_lines) == 0 else tabs_size}private {field_type} {attribute_name};")
-
-				field_code = "\n".join(field_code_lines)
-
-		field_code = field_code.replace(";\n", ";\n\n\t\t").replace(")\n", ")\n\t\t")
 		version_field = "versao" if self.language == "BR" else "version"
 
 		entity_code = dedent(f"""\
@@ -87,15 +87,15 @@ class EntityGenerator(BaseGenerator):
 
 				@Data
 				@Table(name = "{self.table_name}", schema = "{self.table_schema}")
-				@SequenceGenerator(name = "seq_{self.table_name}", sequenceName = "seq_{self.table_name}", allocationSize = 1)
+				@SequenceGenerator(name = "seq_id_{self.table_name}", sequenceName = "seq_id_{self.table_name}", allocationSize = 1)
 				public class {entity_name_pascal} {{
 
 						@Id
 						@GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_id_{self.table_name}")
-						@Column(name = "seq_id_{self.table_name}")
+						@Column(name = "seq_{self.table_name}")
 						private Long id;
 
-						{field_code}
+						{self.generate_field_code()}
 
 						@Version
 						private Integer {version_field};

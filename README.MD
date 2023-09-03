@@ -55,6 +55,18 @@ Run the `main.py` script and follow the interactive prompts.
 python main.py
 ```
 
+## How to Test
+
+The folder ./tests contains some Unity and Integration tests, the Integration tests are inside test_main.py file and are not properly implemented yet.
+
+```sh
+`python -m unittest` # Run inside the tests folder for test everything
+`python -m unittest discover -k test_entity_generator` # Run inside the tests folder for testing the entity_generator.py
+`python -m unittest discover -k test_vo_generator` # Run inside the tests folder for testing the vo_generator.
+`python -m unittest discover -k test_repository_generator` # Run inside the tests folder for testing the repository_generator.py
+`python -m unittest discover -k test_service_generator` # Run inside the tests folder for testing the service_generator.py
+```
+
 ## Input Format
 
 The fields_input expects a specific pattern:

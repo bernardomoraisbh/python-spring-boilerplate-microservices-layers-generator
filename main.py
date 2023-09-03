@@ -10,7 +10,7 @@ from input_handler import gather_inputs
 # Example usage:
 # group_name = "com.example"
 # entity_name = "Person"
-# fields_input = "String-firstName[first_name];Long-age,Date-birthDate;Long-addressName[address];History-history[seq_history]{n-1,seq_history}"
+# fields_input = "String-firstName[first_name];Long-age;Date-birthDate;Long-addressName[address];History-history[seq_history]{n-1,seq_history}"
 #  fields should follow this pattern type-attributeName[column_name]{n-n,joinColumnName} separated by semicolon
 # table_name = "person_table"
 # table_schema = "public"
