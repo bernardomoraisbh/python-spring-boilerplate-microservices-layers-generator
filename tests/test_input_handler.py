@@ -9,7 +9,7 @@ from input_handler import gather_inputs
 
 class TestInputHandlerUS(unittest.TestCase):
 
-	@patch('builtins.input', side_effect=['com.example', 'Person', 'US', 'String-firstName[first_name];Long-age;Date-birthDate;Long-addressName[address];History-history[seq_history]{n-1,seq_history}', 'person_table', 'public', '11'])
+	@patch('builtins.input', side_effect=['v1', 'com.example', 'Person', 'US', 'person_table', 'public', '11', 'String-firstName[first_name];Long-age;Date-birthDate;Long-addressName[address];History-history[seq_history]{n-1,seq_history}'])
 	def test_gather_inputs(self, mock_input):
 		self.maxDiff = None
 		expected_output = {
@@ -29,7 +29,7 @@ class TestInputHandlerUS(unittest.TestCase):
 		}
 		self.assertEqual(gather_inputs(input_function=mock_input), expected_output)
 
-	@patch('builtins.input', side_effect=['  com.example  ', '  Person  ', '  US  ', '  String-firstName[first_name]  ;  Long-age;Date-birthDate;Long-addressName[address];History-history[seq_history]{n-1,seq_history}  ', '  person_table  ', '  public  ', '  11  '])
+	@patch('builtins.input', side_effect=['  v1  ', '  com.example  ', '  Person  ', '  US  ', '  person_table  ', '  public  ', '  11  ', '  String-firstName[first_name]  ;  Long-age;Date-birthDate;Long-addressName[address];History-history[seq_history]{n-1,seq_history}  '])
 	def test_gather_inputs_with_extra_spaces(self, mock_input):
 		self.maxDiff = None
 		# This expected_output is similar to the first one; the function should be able to handle extra spaces.
@@ -52,7 +52,7 @@ class TestInputHandlerUS(unittest.TestCase):
 
 class TestInputHandlerBR(unittest.TestCase):
 
-	@patch('builtins.input', side_effect=['com.example', 'Person', 'BR', 'String-firstName[first_name];Long-age;Date-birthDate;Long-addressName[address];History-history[seq_history]{n-1,seq_history}', 'person_table', 'public', '11'])
+	@patch('builtins.input', side_effect=['v1', 'com.example', 'Person', 'BR', 'person_table', 'public', '11', 'String-firstName[first_name];Long-age;Date-birthDate;Long-addressName[address];History-history[seq_history]{n-1,seq_history}'])
 	def test_gather_inputs(self, mock_input):
 		self.maxDiff = None
 		expected_output = {
@@ -72,7 +72,7 @@ class TestInputHandlerBR(unittest.TestCase):
 		}
 		self.assertEqual(gather_inputs(input_function=mock_input), expected_output)
 
-	@patch('builtins.input', side_effect=['  com.example  ', '  Person  ', '  BR  ', '  String-firstName[first_name]  ;  Long-age;Date-birthDate;Long-addressName[address];History-history[seq_history]{n-1,seq_history}  ', '  person_table  ', '  public  ', '  11  '])
+	@patch('builtins.input', side_effect=['  v1  ', '  com.example  ', '  Person  ', '  BR  ', '  person_table  ', '  public  ', '  11  ', '  String-firstName[first_name]  ;  Long-age;Date-birthDate;Long-addressName[address];History-history[seq_history]{n-1,seq_history}  '])
 	def test_gather_inputs_with_extra_spaces(self, mock_input):
 		self.maxDiff = None
 		# This expected_output is similar to the first one; the function should be able to handle extra spaces.

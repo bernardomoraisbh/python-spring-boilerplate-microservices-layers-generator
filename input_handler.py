@@ -1,6 +1,6 @@
 import re
 
-from utils import camel_to_kebab
+from utils import camel_to_kebab, camel_to_snake
 
 
 def parse_fields(fields):
@@ -26,32 +26,58 @@ def parse_fields(fields):
 		parsed_fields.append(field_dict)
 	return parsed_fields
 
-def gather_inputs(input_function=input):
-	# Gather user inputs
-	group_name = input_function("Enter the group project name (dots-separated): ")
-	entity_name = input_function("Enter the entity name (pascal case): ")
-	language = input_function("Enter the language (US/BR): ")
-	fields_input = input_function("Enter the fields (semicolon-separated): ")
-	table_name = input_function("Enter the table name (database table name, using snake case): ")
-	table_schema = input_function("Enter the table schema: ")
-	jdk_version = input_function("Enter JDK version (11/17): ")
-	fields = fields_input.split(';')
+def gather_single_field_input(input_function=input):
+	field_dict = {}
+	field_dict['type'] = input_function("Field type: ").strip()
+	field_dict['name'] = input_function("Field name: ").strip()
 
+	column_name = input_function("Column name (Optional): ").strip()
+	field_dict['column_name'] = column_name if column_name else camel_to_snake(field_dict['name'])
+
+	relationship = input_function("Relationship (Optional: 1-1, 1-n, n-1, n-n): ").strip()
+	field_dict['join_details'] = relationship if relationship else None
+
+	if relationship:
+		field_dict['join_column_name'] = input_function("Join column name: ").strip()
+
+	return field_dict
+
+def gather_inputs(input_function=input):
+
+	version = input_function("Which version do you want to use? (v1/v2): ").strip()
+
+	group_name = input_function("Enter the group project name (dots-separated): ").strip()
+	entity_name = input_function("Enter the entity name (Pascal case): ").strip()
+	language = input_function("Enter the language (US/BR): ").strip()
+	table_name = input_function("Enter the table name (snake case): ").strip()
+	table_schema = input_function("Enter the table schema: ").strip()
+	jdk_version = input_function("Enter the JDK version (11/17): ").strip()
+
+	fields = []
+
+	if version == "v1":
+		fields_input = input_function("Enter the fields (semicolon-separated): ").strip()
+		fields = parse_fields(fields_input.split(';'))
+	elif version == "v2":
+		num_fields = int(input_function("Number of fields you want? ").strip())
+		for _ in range(num_fields):
+			fields.append(gather_single_field_input(input_function))
+
+	# version = v1
 	# group_name = "com.example"
 	# entity_name = "personHistory"
 	# language = "US"
-	# fields_input = "String-firstName[first_name];Long-age;Date-birthDate;Long-addressName[address];History-history[seq_history]{n-1,seq_history}"
 	# table_name = "person_table"
 	# table_schema = "public"
 	# jdk_version = "11"
-	# fields = fields_input.split(';')
+	# fields_input = "String-firstName[first_name];Long-age;Date-birthDate;Long-addressName[address];History-history[seq_history]{n-1,seq_history}"
 
 	return {
-		'group_name': group_name.strip(),
-		'entity_name': entity_name.strip(),
-		'language': language.strip(),
-		'fields_input': parse_fields(fields),
-		'table_name': table_name.strip(),
-		'table_schema': table_schema.strip(),
-		'jdk_version': jdk_version.strip(),
+		'group_name': group_name,
+		'entity_name': entity_name,
+		'language': language,
+		'fields_input': fields,
+		'table_name': table_name,
+		'table_schema': table_schema,
+		'jdk_version': jdk_version,
 	}
