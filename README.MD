@@ -52,8 +52,72 @@ Should I have created a Gradle task for this with groovy? Yes, probably, but now
 Run the `main.py` script and follow the interactive prompts.
 
 ```sh
-python main.py
+python main.py        # For manual data input
 ```
+
+The script have 3 versions:
+
+v1 - Will prompt you the information needed for generating the files as this example:
+
+```sh
+	# version = v1
+	# group_name = "com.example"
+	# entity_name = "personHistory"
+	# language = "US"
+	# table_name = "person_table"
+	# table_schema = "public"
+	# jdk_version = "11"
+	# fields_input = "String-firstName[first_name];Long-age;Date-birthDate;Long-addressName[address];History-history[seq_history]{n-1,seq_history}"
+```
+
+v2 - It will ask the same things, but the fields option is a loop, so you can enter every field and property about the field independently
+
+```sh
+# Which version do you want to use? (v1/v2/v3): v2
+# Enter the group project name (dots-separated): com.example
+# Enter the entity name (Pascal case): PersonHistory
+# Enter the language (US/BR): US
+# Enter the table name (snake case): person_table
+# Enter the table schema: public
+# Enter the JDK version (11/17): 11
+# Number of fields you want? 5
+# Field type: String
+# Field name: firstName
+# Column name (Optional): first_name
+# Relationship (Optional: 1-1, 1-n, n-1, n-n):
+# Field type: Long
+# Field name: age
+# Column name (Optional):
+# Relationship (Optional: 1-1, 1-n, n-1, n-n):
+# Field type: Date
+# Field name: birthDate
+# Column name (Optional):
+# Relationship (Optional: 1-1, 1-n, n-1, n-n):
+# Field type: Long
+# Field name: addressName
+# Column name (Optional): address
+# Relationship (Optional: 1-1, 1-n, n-1, n-n):
+# Field type: History
+# Field name: history
+# Column name (Optional): seq_history
+# Relationship (Optional: 1-1, 1-n, n-1, n-n): n-1
+# Join column name: seq_history
+# Successfully generated the CRUD files.
+```
+
+v3 - A GUI interface will open where you can input the same as above and you can also dynamically input or remove new fields.
+
+You can also run the script passing the LANGUAGE (BR/US) AND the VERSION as execution args, as in the examples bellow:
+
+```sh
+python main.py US v1  # For US language and version v1
+python main.py US v2  # For US language and version v2
+python main.py US v3  # For US language and version v3
+python main.py BR v1  # For BR language and version v1
+python main.py BR v2  # For BR language and version v2
+python main.py BR v3  # For BR language and version v3
+```
+
 
 ## How to Test
 

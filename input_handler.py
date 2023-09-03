@@ -6,6 +6,7 @@ from utils import camel_to_snake
 
 
 def parse_arguments():
+	"""Function used to read the execution program args."""
 	parser = argparse.ArgumentParser(description="Specify language and input version.")
 	parser.add_argument("language", nargs='?', default=None, choices=["US", "BR"], help="Language to use: US or BR")
 	parser.add_argument("version", nargs='?', default=None, choices=["v1", "v2", "v3"], help="Input version to use: v1, v2, or v3")
@@ -13,6 +14,8 @@ def parse_arguments():
 	return args.language, args.version
 
 def parse_fields(fields):
+	"""Function used to parse the fields data on the v1 of the script,
+	it receives a list of the inputs and returns a dictionary with all the inputs parsed."""
 	parsed_fields = []
 	for field in fields:
 		# Initialize dictionary to hold parsed elements for each field
@@ -36,6 +39,8 @@ def parse_fields(fields):
 	return parsed_fields
 
 def gather_single_field_input(input_function=input):
+	"""Function used to parse individual field data on the v2 of the script,
+	it returns a dictionary with all the inputs."""
 	field_dict = {}
 	field_dict['type'] = input_function("Field type: ").strip()
 	field_dict['name'] = input_function("Field name: ").strip()
