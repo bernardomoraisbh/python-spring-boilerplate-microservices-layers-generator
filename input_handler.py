@@ -64,6 +64,8 @@ def gather_inputs(input_function=input, version=None, language=None):
 		version = input_function("Which version do you want to use? (v1/v2/v3): ").strip()
 
 	if version == "v3":
+		if language is None:
+			language = input_function("Enter the language (US/BR): ").strip()
 		return gather_inputs_gui(language=language)
 
 	group_name = input_function("Enter the group project name (dots-separated): ").strip()
