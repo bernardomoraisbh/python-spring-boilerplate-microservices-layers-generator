@@ -15,6 +15,8 @@ class ControllerGenerator(BaseGenerator):
 	def generate(self):
 		entity_name_kebab = ''.join(word.lower() if i == 0 else '-' + word.lower() for i, word in enumerate(re.findall('[A-Z][^A-Z]*', self.entity_name)))
 		controller_name = f"{camel_to_pascal(self.entity_name)}Controller"
+		entity_name_pascal = camel_to_pascal(self.entity_name)
+		vo_name_pascal = f"{entity_name_pascal}VO"
 		service_name = f"{self.entity_name}Service"
 		service_name_camel_case = pascal_to_camel(self.entity_name)
 		service_field_name = f"{service_name_camel_case}Service"
@@ -49,13 +51,13 @@ class ControllerGenerator(BaseGenerator):
 						private {service_name} {service_field_name};
 
 						@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-						public Page<{controller_name}VO> {self.language_dict.get_text('listWithFilters')}({controller_name}Request request, @PageableDefault(sort = {{"id"}}, direction = Direction.DESC, size = Integer.MAX_VALUE) Pageable pageable) {{
+						public Page<{vo_name_pascal}VO> {self.language_dict.get_text('listWithFilters')}({entity_name_pascal}Request request, @PageableDefault(sort = {{"id"}}, direction = Direction.DESC, size = Integer.MAX_VALUE) Pageable pageable) {{
 								logger.info("{controller_name}.{self.language_dict.get_text('listWithFilters')}()");
 								return {service_field_name}.{self.language_dict.get_text('listVoWithFilters')}(request, pageable);
 						}}
 
 						@GetMapping(path = "/{{id}}", produces = MediaType.APPLICATION_JSON_VALUE)
-						public {controller_name}VO {self.language_dict.get_text('findById')}(@PathVariable Long id) {{
+						public {vo_name_pascal} {self.language_dict.get_text('findById')}(@PathVariable Long id) {{
 								logger.info("{controller_name}.{self.language_dict.get_text('findById')}({{}})", id);
 								return {service_field_name}.{self.language_dict.get_text('findVoById')}(id);
 						}}
