@@ -41,7 +41,7 @@ class ServiceGenerator(BaseGenerator):
 						private {repo_name} {repo_field_name};
 
 						public {service_name_pascal} {self.language_dict.get_text('findById')}(Long id) {{
-								return {repo_field_name}.findByIdAnd{camel_to_pascal(date_field)}
+								return {repo_field_name}.findByIdAnd{camel_to_pascal(date_field)}(id)
 										.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{self.language_dict.get_text('not found')}."));
 						}}
 
@@ -55,7 +55,7 @@ class ServiceGenerator(BaseGenerator):
 
 						public Page<{service_name_pascal}VO> {self.language_dict.get_text('listVoWithFilters')}({service_name_pascal}Request request, Pageable pageable) {{
 								Page<{service_name_pascal}> entityList = {self.language_dict.get_text('findByFilters')}(request, pageable);
-								return new PageImpl<>(entityList.stream().map(x -> new {service_name_pascal}VO(x)).collect(Collectors.toList()), pageable, entityList.getTotalElements());
+								return new PageImpl<>(entityList.stream().map({service_name_pascal}::new).collect(Collectors.toList()), pageable, entityList.getTotalElements());
 						}}
 
 						@Transactional
