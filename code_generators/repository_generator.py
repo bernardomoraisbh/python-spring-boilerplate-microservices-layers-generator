@@ -62,11 +62,11 @@ class RepositoryGenerator(BaseGenerator):
 			fields_code += "\" +"
 
 			if field_type == 'String':
-				fields_code += '\n\t\t\t\t\t\t\t\t" AND (:#{\'#searchFilter.' + f'{field_name_camel_case}' + '} IS NULL OR ' + f'{self.entity_name.lower()}.{field_name_camel_case}' + ' LIKE %:#{\'#searchFilter.' + f'{field_name_camel_case}' + '}%) '
+				fields_code += '\n\t\t\t\t\t\t\t\t" AND (:#{#searchFilter.' + f'{field_name_camel_case}' + '} IS NULL OR ' + f'{self.entity_name.lower()}.{field_name_camel_case}' + ' LIKE %:#{#searchFilter.' + f'{field_name_camel_case}' + '}%) '
 			elif field_type.startswith(('List<', 'Set<', 'ArrayList<')):
-				fields_code += '\n\t\t\t\t\t\t\t\t" AND (:#{\'#searchFilter.ids' + f'{field_name_camel_case}' + '} IS NULL OR ' + f'{self.entity_name.lower()}.{field_name_camel_case}.id' + ' IN :#{\'#searchFilter.ids' + f'{field_name_camel_case}' + '}) '
+				fields_code += '\n\t\t\t\t\t\t\t\t" AND (:#{#searchFilter.ids' + f'{field_name_camel_case}' + '} IS NULL OR ' + f'{self.entity_name.lower()}.{field_name_camel_case}.id' + ' IN :#{#searchFilter.ids' + f'{field_name_camel_case}' + '}) '
 			else:
-				fields_code += '\n\t\t\t\t\t\t\t\t" AND (:#{\'#searchFilter.' + f'{field_name_camel_case}' + '} IS NULL OR ' + f'{self.entity_name.lower()}.{field_name_camel_case}' + ' = :#{\'#searchFilter.' + f'{field_name_camel_case}' + '}) '
+				fields_code += '\n\t\t\t\t\t\t\t\t" AND (:#{#searchFilter.' + f'{field_name_camel_case}' + '} IS NULL OR ' + f'{self.entity_name.lower()}.{field_name_camel_case}' + ' = :#{#searchFilter.' + f'{field_name_camel_case}' + '}) '
 
 		query_code = f"""
 						@Query("SELECT {self.entity_name.lower()} FROM {repository_name_pascal} {self.entity_name.lower()} " +
