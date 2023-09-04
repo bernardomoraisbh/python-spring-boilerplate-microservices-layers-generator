@@ -74,12 +74,9 @@ class EntityGenerator(BaseGenerator):
 				import lombok.Data;
 				import {annotations_package}.*;
 				import java.time.LocalDateTime;
-				import javax.persistence.Temporal;
-				import javax.persistence.TemporalType;
-				import javax.persistence.CascadeType;
-				import javax.persistence.FetchType;
 
 				@Data
+				@Entity
 				@Table(name = "{self.table_name}", schema = "{self.table_schema}")
 				@SequenceGenerator(name = "seq_id_{self.table_name}", sequenceName = "seq_id_{self.table_name}", allocationSize = 1)
 				public class {entity_name_pascal} {{
